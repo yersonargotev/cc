@@ -216,7 +216,7 @@ A  .claude/CLAUDE.md
 
 ```
 Session:
-.claude/sessions/{SESSION_ID}_{DESC}/
+.claude/sessions/YYYYMMDD_HHMMSS_hex_desc/
 ├── explore.md      (15KB - loaded manually)
 ├── plan.md         (8KB - loaded manually)
 └── code.md         (12KB - logged manually)
@@ -235,15 +235,22 @@ Issues:
 ❌ No automation
 ```
 
-### After (v2.0)
+### After (v2.0 + v3.0 Session Manager)
 
 ```
 Session:
-.claude/sessions/{SESSION_ID}_{DESC}/
+.claude/sessions/v2-YYYYMMDDTHHmmss-base32-slug/
 ├── CLAUDE.md       (< 200 lines - auto-loaded!)
 ├── explore.md      (detailed - referenced on demand)
 ├── plan.md         (detailed - referenced on demand)
 └── code.md         (summary - concise)
+
+Session ID Format: v2-20251109T143045-n7c3fa9k-auth-refactor
+
+References:
+- @latest or @ → Most recent session
+- n7c3fa9k → Short ID (8 chars)
+- @/auth-refactor → Slug search
 
 Workflow:
 1. Explore (parallel subagents) - 1 minute
@@ -257,6 +264,8 @@ Improvements:
 ✅ 60-80% token reduction
 ✅ Session validation hooks
 ✅ Auto-save automation
+✅ Git-like references (v3.0)
+✅ Zero dependencies (v3.0)
 ```
 
 ## Token Usage Optimization
@@ -352,7 +361,7 @@ Detailed findings: @.claude/sessions/{session}/explore.md
 /cc:explore "add rate limiting middleware" "protect API endpoints"
 
 Output:
-✅ Exploration complete for session: 20251109_150030_abc123de
+✅ Exploration complete for session: v2-20251109T150030-n7c3fa9k-add-rate-limiting-middleware
 
 📊 Summary:
 - 12 files analyzed
@@ -365,15 +374,15 @@ Output:
 2. rate-limiter-flexible library available and current
 3. No existing rate limiting (clean slate)
 
-🚀 Next: Run `/cc:plan 20251109_150030_abc123de` to create implementation plan
+🚀 Next: Run `/cc:plan @latest` to create implementation plan
 
 Session context auto-loaded via: .claude/sessions/.../CLAUDE.md
 
-# Create plan (auto-loaded context)
-/cc:plan 20251109_150030_abc123de "token bucket with Redis backend"
+# Create plan (auto-loaded context) - Using @latest reference
+/cc:plan @latest "token bucket with Redis backend"
 
 Output:
-✅ Planning complete for session: 20251109_150030_abc123de
+✅ Planning complete for session: v2-20251109T150030-n7c3fa9k-add-rate-limiting-middleware
 
 📋 Implementation Approach:
 Use rate-limiter-flexible with Redis store for distributed rate limiting
@@ -382,11 +391,11 @@ Use rate-limiter-flexible with Redis store for distributed rate limiting
 📊 Tests Planned: 8 test scenarios
 ⚠️  Risks Identified: 2 with mitigation strategies
 
-# Implement (auto-loaded context + plan)
-/cc:code 20251109_150030_abc123de "middleware implementation"
+# Implement (auto-loaded context + plan) - Using @ shorthand
+/cc:code @ "middleware implementation"
 
 Output:
-✅ Implementation complete for session: 20251109_150030_abc123de
+✅ Implementation complete for session: v2-20251109T150030-n7c3fa9k-add-rate-limiting-middleware
 
 📝 Summary:
 Added rate limiting middleware with token bucket algorithm
@@ -413,11 +422,11 @@ Added rate limiting middleware with token bucket algorithm
 # Explore the bug
 /cc:explore "fix authentication token expiration" "users logged out unexpectedly"
 
-# Plan the fix
-/cc:plan 20251109_160145_def456gh "extend token lifetime and add refresh logic"
+# Plan the fix - Using short ID reference
+/cc:plan n7c3f "extend token lifetime and add refresh logic"
 
-# Implement
-/cc:code 20251109_160145_def456gh "token service updates"
+# Implement - Using slug search
+/cc:code @/fix-auth "token service updates"
 
 # Commit
 /cc:commit fix "correct token expiration calculation"
@@ -441,7 +450,11 @@ cd /path/to/test/project
 
 2. **Test Auto-Loaded Context**:
 ```bash
-/cc:plan {session_id} "test approach"
+# Using @latest reference
+/cc:plan @latest "test approach"
+
+# Or using short ID
+/cc:plan n7c3f "test approach"
 
 # Verify:
 # - Session CLAUDE.md auto-loaded (check for key findings in plan)
@@ -463,11 +476,11 @@ cd /path/to/test/project
 ```bash
 /cc:explore "test" "test"
 
-# After completion, check:
-cat .claude/sessions/{latest}/CLAUDE.md | grep "Last Updated"
+# After completion, check (use actual session ID from output):
+cat .claude/sessions/v2-*/CLAUDE.md | grep "Last Updated"
 # Should show timestamp
 
-cat .claude/sessions/{latest}/activity.log
+cat .claude/sessions/v2-*/activity.log
 # Should show activity entries
 ```
 
@@ -565,11 +578,11 @@ ls /cc/.claude/agents/
 # Always run from project root
 cd /path/to/your/project
 
-# Verify session CLAUDE.md exists
-ls .claude/sessions/{session_id}*/CLAUDE.md
+# Verify session CLAUDE.md exists (v2 format)
+ls .claude/sessions/v2-*/CLAUDE.md
 
-# Check file contents
-cat .claude/sessions/{session_id}*/CLAUDE.md
+# Check file contents (use actual session ID)
+cat .claude/sessions/v2-20251109T150030-n7c3fa9k-*/CLAUDE.md
 ```
 
 ### Hooks Not Running

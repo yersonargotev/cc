@@ -8,24 +8,43 @@ CC is a Claude Code plugin that implements a senior engineer workflow system wit
 - File-based persistence for context continuity
 - Progressive refinement with human-in-the-loop validation
 
-## Session Management
+## Session Management (v3.0 - Integrated Session Manager v2)
 
-### Session Structure (v2.0 - Hybrid Exploration)
+### Session Structure
 ```
-.claude/sessions/{SESSION_ID}_{DESCRIPTION}/
+.claude/sessions/v2-YYYYMMDDTHHmmss-base32-slug/
 ├── CLAUDE.md          # Active session context (auto-loaded)
 ├── explore.md         # Complete exploration report
 ├── code-search.md     # Code analysis results
 ├── web-research.md    # Web research findings
 ├── synthesis.md       # Integrated insights
 ├── plan.md            # Implementation plan
-└── code.md            # Implementation summary
+├── code.md            # Implementation summary
+└── activity.log       # Session activity tracking
 ```
 
-### Session ID Format
-- Pattern: `YYYYMMDD_HHMMSS_randomhex_description`
-- Example: `20251109_143045_abc123de_auth_refactor`
-- Generation: `$(date +%Y%m%d_%H%M%S)_$(openssl rand -hex 4)`
+### Session ID Format (v3.0)
+- **Format**: `v2-YYYYMMDDTHHmmss-base32random-kebab-slug`
+- **Example**: `v2-20251109T143045-n7c3fa9k-auth-refactor`
+- **Components**:
+  - `v2` - Version prefix (future-proof)
+  - `20251109T143045` - ISO8601 compact timestamp
+  - `n7c3fa9k` - 8-char base32 random (human-friendly, no 0/O or 1/l)
+  - `auth-refactor` - Kebab-case slug (unlimited length)
+- **Generation**: Pure bash (no OpenSSL required)
+
+### Git-Like References
+- `@latest` or `@` - Most recent session
+- `@{N}` - Nth previous session (e.g., `@{1}` for second-most recent)
+- Short ID - 8-char prefix (e.g., `n7c3fa9k`)
+- Slug search - `@/auth-refactor`
+- Full v2 ID - Complete session ID
+
+### Session Index
+- Location: `.claude/sessions/index.json`
+- Purpose: Fast session lookups and metadata
+- Structure: Sessions, refs (@latest, @{N}), settings
+- Management: Automatic via hooks, manual via `/session-rebuild-index`
 
 ## Workflow Phases
 

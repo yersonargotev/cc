@@ -101,10 +101,10 @@ The `/explore` command now provides:
 - **Risk Assessment**: Security, maintainability, and technical risks
 - **Prioritized Recommendations**: Immediate, short-term, and long-term actions
 
-### Session Management
-Sessions now include:
+### Session Management (v3.0)
+Sessions now include v2 session IDs with Git-like references:
 ```markdown
-.claude/sessions/{SESSION_ID}_{DESCRIPTION}/
+.claude/sessions/v2-YYYYMMDDTHHmmss-base32-slug/
 ├── CLAUDE.md          # Session context (auto-loaded)
 ├── explore.md         # Complete exploration report
 ├── code-search.md     # Code analysis results
@@ -113,6 +113,12 @@ Sessions now include:
 ├── plan.md            # Implementation plan
 └── code.md            # Implementation summary
 ```
+
+**Session References**:
+- `@latest` or `@` - Most recent session
+- `n7c3fa9k` - Short ID (8 chars)
+- `@/auth-feature` - Slug search
+- Full v2 ID works directly
 
 ## Examples
 

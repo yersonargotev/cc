@@ -8,8 +8,10 @@ A Claude Code plugin implementing a comprehensive senior engineer workflow syste
 🚀 **Parallel Exploration**: 3-5x faster using specialized subagents
 🧠 **Smart Memory**: CLAUDE.md hierarchical memory with auto-loading
 🔒 **Safety Hooks**: Validation and auto-save capabilities
-📊 **Session Management**: Persistent context across phases
+📊 **Session Management v2**: Git-like references (@latest, short IDs, slug search)
 🎯 **Human-in-the-Loop**: User approval for critical operations
+🔍 **Zero Dependencies**: Pure bash, no OpenSSL required
+⚡ **Index-based Lookups**: Fast session discovery and switching
 
 ## Quick Start
 
@@ -23,20 +25,34 @@ claude code plugin install /path/to/cc
 claude code plugin install cc
 ```
 
-### Basic Usage
+### Basic Usage (v2 with Git-like References)
 
 ```bash
 # 1. Explore: Research and gather context
 /cc:explore "add user authentication" "JWT-based"
+# → Creates: v2-20251109T143045-n7c3fa9k-add-user-authentication
 
-# 2. Plan: Create implementation strategy
-/cc:plan 20251109_143045_abc123de "implement JWT auth"
+# 2. Plan: Use @latest reference (easiest!)
+/cc:plan @latest
+
+# Alternative: Use @ shorthand
+/cc:plan @
+
+# Alternative: Use short ID (8 chars)
+/cc:plan n7c3fa9k
+
+# Alternative: Use slug search
+/cc:plan @/add-user-auth
 
 # 3. Code: Execute the plan
-/cc:code 20251109_143045_abc123de "focus on login endpoint"
+/cc:code @latest
 
 # 4. Commit: Create conventional commit
 /cc:commit feat "add JWT authentication system"
+
+# 5. Manage sessions
+/session-list                    # View all sessions
+/session-list auth --limit 10    # Filter by keyword
 ```
 
 ## Architecture
@@ -47,18 +63,28 @@ claude code plugin install cc
 .claude/
 ├── CLAUDE.md              # Project-level guidelines (auto-loaded)
 ├── sessions/
-│   └── {SESSION_ID}_{DESC}/
+│   ├── index.json         # Session index for fast lookups (NEW v2)
+│   └── v2-YYYYMMDDTHHmmss-base32-slug/  # v2 session format
 │       ├── CLAUDE.md      # Session context (auto-loaded)
 │       ├── explore.md     # Detailed exploration results
 │       ├── plan.md        # Implementation plan
-│       └── code.md        # Implementation summary
+│       ├── code.md        # Implementation summary
+│       └── activity.log   # Session activity tracking
+├── scripts/               # Session management (NEW v2)
+│   ├── generate-session-id.sh
+│   ├── resolve-session-id.sh
+│   └── session-index.sh
 ├── agents/                # Subagent definitions
 │   ├── code-search-agent.md
 │   ├── web-research-agent.md
 │   └── context-synthesis-agent.md
+├── skills/                # AI-invoked skills (NEW v2)
+│   └── session-finder/    # Natural language session search
 └── hooks/                 # Lifecycle hooks
-    ├── pre-tool-use/
-    ├── stop/
+    ├── session-start/     # Auto-load active session (NEW v2)
+    ├── session-end/       # Save state on exit (NEW v2)
+    ├── pre-tool-use/      # Validate references
+    ├── stop/              # Auto-save state
     └── user-prompt-submit/
 ```
 
@@ -417,6 +443,83 @@ Code Phase:
   → Updates: session CLAUDE.md
 ```
 
+## Session References (v2)
+
+### Git-Like Reference System
+
+Session Manager v2 introduces a powerful reference system inspired by Git:
+
+| Reference | Description | Example |
+|-----------|-------------|---------|
+| `@latest` | Most recent session | `/cc:plan @latest` |
+| `@` | Shorthand for @latest | `/cc:code @` |
+| `@{N}` | Nth previous session | `/cc:plan @{1}` |
+| Short ID | 8-char prefix match | `/cc:code n7c3fa9k` |
+| `@/slug` | Slug search | `/cc:plan @/auth` |
+| Full ID | Complete session ID | `/cc:code v2-20251109T...` |
+
+### Session ID Format (v2)
+
+```
+v2-YYYYMMDDTHHmmss-base32random-kebab-slug
+
+Example:
+v2-20251109T183846-n7c3fa9k-implement-user-authentication-with-oauth
+
+Components:
+  v2              - Version prefix (enables future evolution)
+  20251109T183846 - ISO8601 compact timestamp (sortable)
+  n7c3fa9k        - 8-char base32 random ID (human-friendly)
+  implement-...   - Kebab-case slug (unlimited length)
+```
+
+### Benefits
+
+- ✅ **Easy to use**: `@latest` instead of typing full IDs
+- ✅ **Human-friendly**: No 0/O or 1/l confusion in base32
+- ✅ **Unlimited slugs**: No 20-char truncation
+- ✅ **Fast lookups**: Index-based resolution
+- ✅ **Multiple strategies**: Choose what works for you
+
+### Session Management Commands
+
+```bash
+# List all sessions
+/session-list
+
+# Filter by keyword
+/session-list authentication
+
+# Limit results
+/session-list --limit 20
+
+# Combine filter and limit
+/session-list feature --limit 10
+
+# Migrate v1 sessions to v2
+/session-migrate --execute
+
+# Rebuild index if corrupted
+/session-rebuild-index
+```
+
+### Natural Language Session Discovery
+
+The `session-finder` skill enables natural language queries:
+
+```bash
+# User: "What was I working on yesterday?"
+# Claude automatically uses session-finder skill to find sessions
+
+# User: "Continue where I left off"
+# Finds and suggests @latest session
+
+# User: "Show me unfinished auth work"
+# Searches for in_progress sessions with "auth" keyword
+```
+
+---
+
 ## Advanced Usage
 
 ### Custom Subagents
@@ -473,6 +576,31 @@ MIT License - see LICENSE file
 - **Research**: See RESEARCH_FINDINGS.md and CLAUDE_CODE_BEST_APPROACH.md
 
 ## Changelog
+
+### v3.0.0 (2025-11-09) - Session Manager v2 Integration
+
+**Major improvements**:
+- ✅ **Session Manager v2**: Git-like references (@latest, short IDs, slug search)
+- ✅ **Zero dependencies**: Removed OpenSSL requirement (pure bash)
+- ✅ **Session index**: JSON-based fast lookups and management
+- ✅ **Lifecycle hooks**: SessionStart, SessionEnd, unified PreToolUse/Stop
+- ✅ **Session discovery**: Natural language search via session-finder skill
+- ✅ **Session management**: /session-list, /session-migrate, /session-rebuild-index
+- ✅ **Backward compatibility**: v1 sessions still work via fallback
+- ✅ **Cross-platform**: Works on Linux and macOS
+
+**Session ID format**:
+- Before: `YYYYMMDD_HHMMSS_hex_description`
+- After: `v2-YYYYMMDDTHHmmss-base32-slug`
+
+**New commands**:
+- `/session-list` - Browse and filter sessions
+- `/session-migrate` - Migrate v1 → v2 sessions
+- `/session-rebuild-index` - Rebuild corrupted index
+
+**Breaking changes**:
+- Session ID format changed (v1 sessions still work via fallback)
+- OpenSSL no longer required (only bash + jq)
 
 ### v2.0.0 (2025-11-09)
 
