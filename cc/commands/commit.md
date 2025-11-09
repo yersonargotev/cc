@@ -52,5 +52,6 @@ git commit -m "$1: $2"
 - **Present tense**: "add feature" not "added feature"
 - **Specific**: Describe what changed
 - **Focused scope**: Avoid mixing unrelated changes
+- **No AI references**: Never mention Claude, Claude Code, or any AI agent in commit messages
 
 Wait for user approval before committing.
