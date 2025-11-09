@@ -1,0 +1,41 @@
+{
+  "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
+  "name": "session-manager",
+  "version": "2.0.0",
+  "description": "Smart session ID management with v2 format, Git-like references (@latest, short IDs, slug search), and automatic lifecycle hooks",
+  "author": {
+    "name": "Claude Code Session Manager",
+    "email": "[email protected]"
+  },
+  "category": "workflow",
+  "keywords": [
+    "session",
+    "workflow",
+    "management",
+    "organization",
+    "productivity",
+    "v2",
+    "references"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yersonargotev/cc"
+  },
+  "permissions": {
+    "filesystem": ["read", "write"],
+    "hooks": ["SessionStart", "SessionEnd", "PreToolUse", "Stop"],
+    "commands": true,
+    "skills": true
+  },
+  "settings": {
+    "session_id_format": "v2",
+    "auto_migrate_v1": false,
+    "retention_days": 90,
+    "auto_archive": true,
+    "index_cache_ttl": 300
+  },
+  "engines": {
+    "claude-code": ">=0.6.0"
+  }
+}
