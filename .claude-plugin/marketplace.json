@@ -5,7 +5,7 @@
     "email": "yersonargotev@gmail.com"
   },
   "metadata": {
-    "description": "Professional engineering workflow plugins with automated session management, code quality tools, and specialized review agents",
+    "description": "Complete workflow system with research, planning, implementation, testing, and review phases. Includes automated session management with hooks.",
     "version": "1.0.0"
   },
   "plugins": [
@@ -20,14 +20,9 @@
       },
       "category": "productivity",
       "keywords": [
-        "senior-engineer",
         "workflow",
         "automation",
-        "testing",
-        "code-review",
-        "session-management",
-        "hooks",
-        "quality-assurance"
+        "session-management"
       ]
     }
   ]

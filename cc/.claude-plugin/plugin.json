@@ -1,13 +1,13 @@
 {
-  "name": "exito",
+  "name": "cc",
   "version": "1.0.0",
   "description": "My workflow system with research, planning, implementation, testing, and review phases. Includes session management and automated hooks.",
   "author": {
     "name": "Yerson",
-    "email": "yargote355@grupo-exito.com"
+    "email": "yersonargotev@gmail.com"
   },
-  "homepage": "https://github.com/yersonargotev/claude-marketplace",
-  "repository": "https://github.com/yersonargotev/claude-marketplace",
+  "homepage": "https://github.com/yersonargotev/cc-mkp",
+  "repository": "https://github.com/yersonargotev/cc-mkp",
   "license": "MIT",
   "mcpServers": "./.mcp.json"
 }
