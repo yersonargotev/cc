@@ -13,9 +13,15 @@ Implement solution for session: **$1** with focus: **$2**$3
 Validate session and plan exist, noting auto-loaded context:
 
 ```bash
-# Extract session ID and validate
+# Extract session ID
 SESSION_ID="$1"
-SESSION_DIR=$(find .claude/sessions -name "${SESSION_ID}_*" -type d | head -1)
+
+# Find session directory (avoid command substitution - Bash tool limitation)
+find .claude/sessions -name "${SESSION_ID}_*" -type d 2>/dev/null | head -1 > /tmp/session_dir.txt
+
+# Read the first result
+read SESSION_DIR < /tmp/session_dir.txt
+rm -f /tmp/session_dir.txt
 
 if [ -z "$SESSION_DIR" ]; then
     echo "❌ Error: Session $SESSION_ID not found"
