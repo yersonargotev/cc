@@ -129,11 +129,17 @@ Started: YYYY-MM-DD HH:MM
   - Generates prioritized, actionable recommendations
   - Creates comprehensive synthesis with risk assessment
 
-#### Legacy Agents (Deprecated - v1.0)
-- `code-structure-explorer`: Use `code-search-agent` instead
-- `test-coverage-analyzer`: Use `code-search-agent` instead
-- `dependency-analyzer`: Use `code-search-agent` instead
-- `documentation-reviewer`: Use `code-search-agent` instead
+#### Legacy Agents (v1.0 → v2.0 Migration Complete)
+- ✅ **Migration Completed**: v1.0 specialized agents have been consolidated into v2.0 unified agents
+- ✅ **Enhanced Capabilities**: `code-search-agent` combines all 4 legacy functions with improved analysis
+- ✅ **Documentation Updated**: All references updated to reflect modern architecture
+- ✅ **Legacy Files Archived**: Historical agents preserved in `cc/agents/legacy/` for reference
+
+**Previous v1.0 Agents → v2.0 Equivalents:**
+- `code-structure-explorer` → **`code-search-agent`** (comprehensive code analysis)
+- `test-coverage-analyzer` → **`code-search-agent`** (test coverage analysis included)
+- `dependency-analyzer` → **`code-search-agent`** (dependency analysis included)
+- `documentation-reviewer` → **`code-search-agent`** (documentation analysis included)
 
 ## Hooks
 

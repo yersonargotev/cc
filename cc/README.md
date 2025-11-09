@@ -53,10 +53,9 @@ claude code plugin install cc
 │       ├── plan.md        # Implementation plan
 │       └── code.md        # Implementation summary
 ├── agents/                # Subagent definitions
-│   ├── code-structure-explorer.md
-│   ├── test-coverage-analyzer.md
-│   ├── dependency-analyzer.md
-│   └── documentation-reviewer.md
+│   ├── code-search-agent.md
+│   ├── web-research-agent.md
+│   └── context-synthesis-agent.md
 └── hooks/                 # Lifecycle hooks
     ├── pre-tool-use/
     ├── stop/
@@ -70,20 +69,21 @@ claude code plugin install cc
 **Purpose**: Comprehensive codebase research with parallel subagent analysis
 
 **Features**:
-- Spawns 4 specialized subagents in parallel
-- 3-5x faster than sequential exploration
+- Hybrid exploration: code analysis + current best practices (2024-2025)
+- Parallel subagent execution (2x faster than sequential)
 - 8x better context efficiency
 - Auto-creates session with CLAUDE.md
+- Professional synthesis with gap analysis
 
-**Subagents**:
-- `code-structure-explorer`: Analyzes architecture and file organization
-- `test-coverage-analyzer`: Assesses test coverage and gaps
-- `dependency-analyzer`: Reviews dependencies and integrations
-- `documentation-reviewer`: Extracts requirements from docs
+**Modern Subagents (v2.0)**:
+- `code-search-agent`: Comprehensive code analysis (architecture + tests + dependencies + docs)
+- `web-research-agent`: Current best practices and industry standards
+- `context-synthesis-agent`: High-quality integration and recommendations
 
 **Output**:
-- Session CLAUDE.md with key findings (< 200 lines)
-- Detailed explore.md with comprehensive results
+- Session CLAUDE.md with key findings and integrated insights
+- Comprehensive explore.md with detailed analysis
+- Actionable recommendations with risk assessment
 
 **Example**:
 ```bash
@@ -481,9 +481,10 @@ MIT License - see LICENSE file
 - ✅ Parallel subagent exploration (4x faster)
 - ✅ Auto-loaded session context
 - ✅ Lifecycle hooks (validation, auto-save, context)
-- ✅ 4 specialized subagents
+- ✅ 3 unified hybrid agents
 - ✅ 8x better context efficiency
 - ✅ Token usage optimization
+- ✅ Current best practices integration (2024-2025)
 
 ### v1.0.0
 

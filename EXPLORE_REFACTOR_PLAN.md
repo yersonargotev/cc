@@ -55,34 +55,30 @@ Arquitectura híbrida con **3 subagentes especializados**:
 
 ```
 cc/agents/
-├── code-structure-explorer.md    (Read, Glob, Grep)
-├── test-coverage-analyzer.md      (Read, Glob, Grep, Bash)
-├── dependency-analyzer.md         (Read, Glob, Grep, Bash)
-└── documentation-reviewer.md      (Read, Glob, Grep)
+├── code-search-agent.md           (Read, Glob, Grep, Task)
+├── web-research-agent.md          (WebSearch, WebFetch, Task)
+└── context-synthesis-agent.md     (Read, Task, Write)
 ```
 
 **Análisis**:
 
-| Agente | Propósito | Tools | Modelo | Limitaciones |
-|--------|-----------|-------|--------|--------------|
-| code-structure-explorer | Analiza arquitectura de código | Read, Glob, Grep | haiku | Solo búsqueda local |
-| test-coverage-analyzer | Evalúa cobertura de tests | Read, Glob, Grep, Bash | haiku | No verifica best practices actuales |
-| dependency-analyzer | Revisa dependencias | Read, Glob, Grep, Bash | haiku | No chequea updates/vulnerabilities en tiempo real |
-| documentation-reviewer | Extrae requirements | Read, Glob, Grep | haiku | Solo docs locales |
+| Agente | Propósito | Tools | Modelo | Ventajas |
+|--------|-----------|-------|--------|-----------|
+| code-search-agent | Análisis de código integral (arquitectura, tests, dependencias, docs) | Read, Glob, Grep, Task | haiku | Consolidado, eficiente, contexto completo |
+| web-research-agent | Investigación de mejores prácticas y estándares actuales | WebSearch, WebFetch, Task | haiku | Información actual 2024-2025, mejores prácticas |
+| context-synthesis-agent | Integración de hallazgos + análisis de brechas + recomendaciones | Read, Task, Write | sonnet | Síntesis de alta calidad, análisis estratégico |
 
 ### Flujo Actual
 
 ```
 /explore <feature> <context>
     │
-    ├─> code-structure-explorer (paralelo)
-    ├─> test-coverage-analyzer (paralelo)
-    ├─> dependency-analyzer (paralelo)
-    └─> documentation-reviewer (paralelo)
+    ├─> code-search-agent (paralelo)     ← Análisis local completo
+    ├─> web-research-agent (paralelo)    ← Best practices 2024-2025
          ↓
-    Síntesis en comando principal
+    context-synthesis-agent (secuencial) ← Integración + síntesis
          ↓
-    Salida a explore.md
+    Salida a explore.md + CLAUDE.md
 ```
 
 **Limitaciones identificadas**:

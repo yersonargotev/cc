@@ -64,10 +64,9 @@ When you run commands from project root:
 - Implemented synthesis process for combining subagent results
 
 **Files Created**:
-- `/cc/.claude/agents/code-structure-explorer.md` (NEW)
-- `/cc/.claude/agents/test-coverage-analyzer.md` (NEW)
-- `/cc/.claude/agents/dependency-analyzer.md` (NEW)
-- `/cc/.claude/agents/documentation-reviewer.md` (NEW)
+- `/cc/.claude/agents/code-search-agent.md` (v2.0 - Unified)
+- `/cc/.claude/agents/web-research-agent.md` (v2.0 - Research)
+- `/cc/.claude/agents/context-synthesis-agent.md` (v2.0 - Integration)
 
 **Benefits**:
 - ✅ 3-5x faster exploration (parallel vs sequential)
@@ -103,10 +102,9 @@ Result: 4x faster, 8x cleaner context
 
 | Subagent | Model | Tools | Focus |
 |----------|-------|-------|-------|
-| code-structure-explorer | Haiku 4.5 | Read, Glob, Grep | Architecture, file organization |
-| test-coverage-analyzer | Haiku 4.5 | Read, Glob, Grep, Bash | Test files, coverage gaps |
-| dependency-analyzer | Haiku 4.5 | Read, Glob, Grep, Bash | Dependencies, integrations |
-| documentation-reviewer | Haiku 4.5 | Read, Glob, Grep | Requirements, documentation |
+| code-search-agent | Haiku 4.5 | Read, Glob, Grep, Task | Comprehensive code analysis (architecture, tests, dependencies, docs) |
+| web-research-agent | Haiku 4.5 | WebSearch, WebFetch, Task | Current best practices and industry standards (2024-2025) |
+| context-synthesis-agent | Sonnet 4.5 | Read, Task, Write | Integration of code + web findings, gap analysis, recommendations |
 
 **Why Haiku**: 90% of Sonnet's capability at lower cost and faster speed, perfect for well-defined exploration tasks.
 
