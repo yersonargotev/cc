@@ -9,6 +9,5 @@
   "homepage": "https://github.com/yersonargotev/cc-mkp",
   "repository": "https://github.com/yersonargotev/cc-mkp",
   "license": "MIT",
-  "mcpServers": "./.mcp.json",
-  "hooks": "./hooks/hooks.json"
+  "mcpServers": "./.mcp.json"
 }
