@@ -1,7 +1,7 @@
 {
   "name": "cc",
-  "version": "1.0.0",
-  "description": "My workflow system with research, planning, implementation, testing, and review phases. Includes session management and automated hooks.",
+  "version": "2.0.0",
+  "description": "Senior engineer workflow system with multi-phase development (explore → plan → code → commit), parallel subagent exploration, CLAUDE.md hierarchical memory, and automated lifecycle hooks. 4x faster exploration, 8x better context efficiency.",
   "author": {
     "name": "Yerson",
     "email": "yersonargotev@gmail.com"
