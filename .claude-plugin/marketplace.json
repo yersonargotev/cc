@@ -1,0 +1,34 @@
+{
+  "name": "cc-mkp",
+  "owner": {
+    "name": "Yerson",
+    "email": "yersonargotev@gmail.com"
+  },
+  "metadata": {
+    "description": "Professional engineering workflow plugins with automated session management, code quality tools, and specialized review agents",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "cc",
+      "source": "./cc",
+      "description": "Complete senior engineer workflow system with research, planning, implementation, testing, and review phases. Includes automated session management with hooks.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Yerson",
+        "email": "yersonargotev@gmail.com"
+      },
+      "category": "productivity",
+      "keywords": [
+        "senior-engineer",
+        "workflow",
+        "automation",
+        "testing",
+        "code-review",
+        "session-management",
+        "hooks",
+        "quality-assurance"
+      ]
+    }
+  ]
+}
