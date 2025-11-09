@@ -1,16 +1,16 @@
 #!/bin/bash
-# SessionEnd Hook: Auto-save Session State
-# Runs when Claude Code session ends
+# Stop Hook: Update Session Metadata
+# Runs after each Claude response completes
 # Stdout not visible to user
 
 set -euo pipefail
 
 INDEX_FILE=".claude/sessions/index.json"
-PLUGIN_DIR=".claude/plugins/session-manager"
+PLUGIN_DIR="${CLAUDE_PLUGIN_ROOT}"
 
-# Check requirements
+# Check requirements (silently fail if missing)
 if [ ! -f "$INDEX_FILE" ] || ! command -v jq &> /dev/null; then
-  exit 0  # Silently skip if no index or jq
+  exit 0
 fi
 
 # Get latest session
@@ -20,20 +20,19 @@ if [ -z "$LATEST_ID" ]; then
   exit 0  # No active session
 fi
 
-# Update session metadata
+# Update timestamp (lightweight operation)
 TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ" 2>/dev/null || date +"%Y-%m-%dT%H:%M:%SZ")
 
-# Use index manager to update
+# Use index manager for atomic update
 if [ -x "$PLUGIN_DIR/scripts/session-index.sh" ]; then
   bash "$PLUGIN_DIR/scripts/session-index.sh" update "$LATEST_ID" \
-    "updated=$TIMESTAMP" \
-    "last_session_end=$TIMESTAMP" &>/dev/null || true
+    "updated=$TIMESTAMP" &>/dev/null || true
 fi
 
-# Append to activity log
+# Append to activity log (don't read it to save tokens)
 SESSION_DIR=".claude/sessions/$LATEST_ID"
 if [ -d "$SESSION_DIR" ]; then
-  echo "[$(date)] Session ended" >> "$SESSION_DIR/activity.log" 2>/dev/null || true
+  echo "[$(date)] Activity" >> "$SESSION_DIR/activity.log" 2>/dev/null || true
 fi
 
 exit 0

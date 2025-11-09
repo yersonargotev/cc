@@ -44,36 +44,41 @@ brew install jq
 jq --version
 ```
 
-### Install Plugin
+### Install via Marketplace (Recommended)
 
-**From this repository**:
+**Option 1: From GitHub** (when published):
 ```bash
-# Copy plugin to Claude Code plugins directory
-cp -r .claude/plugins/session-manager ~/.claude/plugins/
+# Start Claude Code
+claude
 
-# Or install as project plugin (current repo only)
-# Already installed in this repo at: .claude/plugins/session-manager
+# Add the marketplace
+/plugin marketplace add yersonargotev/cc
+
+# Install the plugin
+/plugin install session-manager@yersonargotev
+
+# Restart Claude Code to activate
 ```
 
-**Configure hooks** (add to `.claude/settings.json`):
-```json
-{
-  "hooks": {
-    "SessionStart": [
-      ".claude/plugins/session-manager/hooks/session-start/load-active-session.sh"
-    ],
-    "SessionEnd": [
-      ".claude/plugins/session-manager/hooks/session-end/save-session-state.sh"
-    ],
-    "PreToolUse": [
-      ".claude/plugins/session-manager/hooks/pre-tool-use/validate-session.sh"
-    ],
-    "Stop": [
-      ".claude/plugins/session-manager/hooks/stop/update-session-metadata.sh"
-    ]
-  }
-}
+**Option 2: Local Development/Testing**:
+```bash
+# Clone or download this repository
+git clone https://github.com/yersonargotev/cc.git
+cd cc
+
+# Start Claude Code
+claude
+
+# Add local marketplace
+/plugin marketplace add ./claude-plugins-marketplace
+
+# Install plugin
+/plugin install session-manager@cc-session-manager-marketplace
+
+# Restart Claude Code
 ```
+
+**Hooks are configured automatically** when you install the plugin. No manual configuration needed! ✨
 
 ---
 

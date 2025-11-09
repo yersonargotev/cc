@@ -18,7 +18,7 @@ List and browse sessions with filtering and sorting.
 #!/bin/bash
 set -euo pipefail
 
-PLUGIN_DIR=".claude/plugins/session-manager"
+PLUGIN_DIR="${CLAUDE_PLUGIN_ROOT}"
 INDEX_FILE=".claude/sessions/index.json"
 
 # Parse arguments

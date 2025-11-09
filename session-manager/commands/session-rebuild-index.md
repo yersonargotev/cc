@@ -26,7 +26,7 @@ Rebuild session index from session directories (recovery tool).
 #!/bin/bash
 set -euo pipefail
 
-PLUGIN_DIR=".claude/plugins/session-manager"
+PLUGIN_DIR="${CLAUDE_PLUGIN_ROOT}"
 INDEX_FILE=".claude/sessions/index.json"
 
 # Parse arguments

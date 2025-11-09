@@ -6,7 +6,7 @@
 set -euo pipefail
 
 INDEX_FILE=".claude/sessions/index.json"
-PLUGIN_DIR=".claude/plugins/session-manager"
+PLUGIN_DIR="${CLAUDE_PLUGIN_ROOT}"
 
 # Ensure index exists
 if [ ! -f "$INDEX_FILE" ]; then

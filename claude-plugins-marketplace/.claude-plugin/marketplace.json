@@ -1,0 +1,37 @@
+{
+  "name": "cc-session-manager-marketplace",
+  "owner": {
+    "name": "Session Manager Development",
+    "email": "dev@session-manager.local"
+  },
+  "metadata": {
+    "description": "Local marketplace for Session Manager v2 plugin development and testing",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "session-manager",
+      "source": "../session-manager",
+      "description": "Smart session ID management with v2 format, Git-like references (@latest, short IDs, slug search), and automatic lifecycle hooks",
+      "version": "2.0.0",
+      "author": {
+        "name": "Session Manager Team",
+        "email": "team@session-manager.local"
+      },
+      "homepage": "https://github.com/yersonargotev/cc",
+      "repository": "https://github.com/yersonargotev/cc",
+      "license": "MIT",
+      "keywords": [
+        "session",
+        "workflow",
+        "management",
+        "organization",
+        "productivity",
+        "v2",
+        "references",
+        "git-like"
+      ],
+      "category": "workflow"
+    }
+  ]
+}

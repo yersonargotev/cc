@@ -6,7 +6,7 @@
 set -euo pipefail
 
 COMMAND="$1"
-PLUGIN_DIR=".claude/plugins/session-manager"
+PLUGIN_DIR="${CLAUDE_PLUGIN_ROOT}"
 
 # Only validate session-related commands
 if ! echo "$COMMAND" | grep -qE "/cc:(plan|code)|/session-|/explore"; then

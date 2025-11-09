@@ -22,7 +22,7 @@ Migrate v1 sessions to v2 format with improved session IDs.
 #!/bin/bash
 set -euo pipefail
 
-PLUGIN_DIR=".claude/plugins/session-manager"
+PLUGIN_DIR="${CLAUDE_PLUGIN_ROOT}"
 
 # Parse arguments
 MODE="--dry-run"

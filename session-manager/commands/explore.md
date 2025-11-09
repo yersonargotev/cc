@@ -23,7 +23,7 @@ Create a new exploration session with v2 session ID format.
 set -euo pipefail
 
 DESCRIPTION="$*"
-PLUGIN_DIR=".claude/plugins/session-manager"
+PLUGIN_DIR="${CLAUDE_PLUGIN_ROOT}"
 
 # Validate input
 if [ -z "$DESCRIPTION" ]; then
