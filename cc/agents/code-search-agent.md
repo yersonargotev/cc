@@ -1,6 +1,6 @@
 ---
 description: "Hybrid code search combining structural and semantic analysis"
-allowed-tools: mcp__claude_context__*, Read, Glob, Grep, Bash, Task
+allowed-tools: mcp__serena__*, Read, Glob, Grep, Bash, Task
 model: haiku
 ---
 
@@ -11,7 +11,7 @@ Search and analyze codebase for components, patterns, and implementation details
 ## Tools
 
 **Semantic Search** (prefer MCP if available):
-- MCP: `mcp__claude_context` for "find code that does X" queries
+- MCP: `mcp__serena` for "find code that does X" queries
 - Fallback: Glob (`**/*.ts`) + Grep (function definitions, imports)
 
 **Analysis**: Read, Bash (coverage, linters), Task (complex sub-searches)

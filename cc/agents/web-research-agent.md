@@ -1,6 +1,6 @@
 ---
 description: "Web research agent for up-to-date information and best practices"
-allowed-tools: mcp__brave_search__*, mcp__duckduckgo__*, WebSearch, WebFetch, Task
+allowed-tools: mcp__tavily__*, mcp__exa__*, mcp__context7__*, WebSearch, WebFetch, Task
 model: haiku
 ---
 
@@ -11,7 +11,7 @@ model: haiku
 ## Tools
 
 **Search** (prefer MCP if available):
-- MCP: `mcp__brave_search` or `mcp__duckduckgo` (check first)
+- MCP: `mcp__tavily`, `mcp__exa`, or `mcp__context7` (check first)
 - Native: `WebSearch` (fallback, always available)
 
 **Fetch**: `WebFetch` for specific URLs
