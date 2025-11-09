@@ -14,7 +14,7 @@ Generate a unique session ID and create session directory:
 
 ```bash
 # Generate session ID and create directory
-SESSION_ID=$(date +%Y%m%d_%H%M%S)_$(head -c 8 /dev/urandom | od -A n -t x | tr -d ' \n')
+SESSION_ID=$(date +%Y%m%d_%H%M%S)_$(openssl rand -hex 4)
 SESSION_DESC=$(echo "$1" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/_/g' | head -c 20)
 SESSION_DIR=".claude/sessions/${SESSION_ID}_${SESSION_DESC}"
 mkdir -p "$SESSION_DIR"
