@@ -4,101 +4,45 @@ argument-hint: "[session_id] [implementation approach] [key constraints]"
 description: Create detailed implementation plan with auto-loaded session context
 ---
 
-# Plan: Strategy and Implementation Planning
+# Plan: Implementation Strategy
 
-Create comprehensive implementation plan for session: **$1** with approach: **$2**$3
+Create detailed plan for session: **$1** with approach: **$2**$3
 
-## Session Validation and Context Loading
-
-Validate session exists and note that session CLAUDE.md is auto-loaded:
+## Session Validation
 
 ```bash
-# Extract session ID
 SESSION_ID="$1"
+SESSION_DIR=$(find .claude/sessions -name "${SESSION_ID}_*" -type d 2>/dev/null | head -1)
 
-# Find session directory (avoid command substitution - Bash tool limitation)
-find .claude/sessions -name "${SESSION_ID}_*" -type d 2>/dev/null | head -1 > /tmp/session_dir.txt
+[ -z "$SESSION_DIR" ] && echo "❌ Session not found: $SESSION_ID" && exit 1
 
-# Read the first result
-read SESSION_DIR < /tmp/session_dir.txt
-rm -f /tmp/session_dir.txt
+echo "✅ Loaded: $SESSION_ID"
+echo "📋 Context auto-loaded from CLAUDE.md"
 
-if [ -z "$SESSION_DIR" ]; then
-    echo "❌ Error: Session $SESSION_ID not found"
-    echo ""
-    echo "Available sessions:"
-    ls -la .claude/sessions/ 2>/dev/null || echo "No sessions found"
-    exit 1
-fi
-
-echo "✅ Session loaded: $SESSION_ID"
-echo "📁 Directory: $SESSION_DIR"
-echo ""
-echo "📋 Context:"
-echo "  - Session CLAUDE.md: Auto-loaded by Claude Code"
-echo "  - Detailed exploration: @$SESSION_DIR/explore.md"
-echo ""
-
-# Update session status
 sed -i "s/Phase: explore/Phase: planning/" "$SESSION_DIR/CLAUDE.md" 2>/dev/null || true
 ```
 
-**Note**: The session CLAUDE.md is automatically loaded by Claude Code's hierarchical memory system. You have immediate access to all key findings without manual file reads.
+**Context Available**:
+- Session CLAUDE.md (auto-loaded): Key findings, gaps, priorities
+- Detailed exploration: @$SESSION_DIR/explore.md (reference if needed)
 
-## Access to Exploration Results
+## Planning Task
 
-You have access to:
-1. **Session CLAUDE.md** (auto-loaded): Key findings, critical insights, risk factors
-2. **Detailed exploration** (reference if needed): @$SESSION_DIR/explore.md
-
-Reference the detailed exploration only if you need comprehensive information beyond the key findings in session CLAUDE.md.
-
-## Your Task
-
-Based on the auto-loaded session context, create a detailed implementation plan:
-
-1. **Review Session Context**: Session CLAUDE.md is already in your context
-2. **Analyze Requirements**: Build on the key findings
-3. **Design Solution**: Create step-by-step implementation approach
-4. **Identify Risks**: Expand on risk factors from exploration
-5. **Plan Testing**: Define validation strategy
-6. **Consider Edge Cases**: Think about error handling
-7. **Update Session**: Save plan and update session CLAUDE.md
-
-## Planning Process
-
-Use extended thinking to thoroughly evaluate:
-
-- **Implementation Strategy**: What's the best approach given the findings?
-- **Breaking Changes**: Backward compatibility considerations
-- **Testing Strategy**: How to validate each step
-- **Documentation**: What needs updating
-- **Performance**: Implications from dependency analysis
-
-## Deliverables
-
-Create a concrete plan including:
+Use extended thinking to create comprehensive implementation plan covering:
 
 ### 1. Implementation Strategy
 - Overall approach and rationale
 - Architecture decisions
-- Pattern choices
+- Pattern choices based on exploration findings
 
 ### 2. Step-by-Step Plan
-```markdown
-1. **Step 1**: [Action]
-   - Files: [specific files to modify]
-   - Changes: [what to change]
-   - Validation: [how to verify]
-
-2. **Step 2**: [Action]
-   - Files: [specific files]
-   - Changes: [what to change]
-   - Validation: [how to verify]
-```
+Detailed steps with:
+- **Files**: Specific paths to modify
+- **Changes**: What to change and why
+- **Validation**: How to verify each step
 
 ### 3. Risk Mitigation
-- High-risk items and mitigation strategies
+- Strategies for identified risks from exploration
 - Contingency plans
 - Rollback procedures
 
@@ -114,9 +58,7 @@ Create a concrete plan including:
 - README updates
 - Migration guides (if needed)
 
-## Session Persistence
-
-### 1. Create plan.md
+## Deliverables
 
 Save comprehensive plan to `$SESSION_DIR/plan.md`:
 
@@ -130,13 +72,16 @@ Save comprehensive plan to `$SESSION_DIR/plan.md`:
 - Approach: $2$3
 
 ## Executive Summary
-[Brief overview of the implementation plan]
+[Brief overview of implementation plan]
 
 ## Implementation Strategy
 [Detailed strategy based on exploration findings]
 
 ## Step-by-Step Implementation
-[Detailed steps with files, changes, validation]
+1. **[Step Name]**
+   - Files: [specific file paths]
+   - Changes: [what to change]
+   - Validation: [how to verify]
 
 ## Risk Mitigation
 [Strategies for identified risks]
@@ -154,13 +99,9 @@ Save comprehensive plan to `$SESSION_DIR/plan.md`:
 [How we'll know it's done correctly]
 ```
 
-### 2. Update Session CLAUDE.md
+Update `$SESSION_DIR/CLAUDE.md` with concise planning summary:
 
-Update session CLAUDE.md with planning summary (keep concise):
-
-```bash
-cat >> "$SESSION_DIR/CLAUDE.md" << 'EOF'
-
+```markdown
 ## Planning Phase Complete
 
 ### Implementation Approach
@@ -179,47 +120,23 @@ cat >> "$SESSION_DIR/CLAUDE.md" << 'EOF'
 - [Criterion 2]
 
 ### References
-Detailed plan: @.claude/sessions/${SESSION_ID}_${SESSION_DESC}/plan.md
-EOF
+Detailed plan: @.claude/sessions/${SESSION_ID}_*/plan.md
 ```
 
-## Plan Quality Checklist
+## Completion
 
-Before completing, ensure:
-
-- ✅ Implementation strategy is clear and justified
-- ✅ Steps are specific with file paths and line numbers (where possible)
-- ✅ Each step has validation criteria
-- ✅ Risks from exploration phase are addressed
-- ✅ Testing approach is comprehensive
-- ✅ Documentation updates identified
-- ✅ Session CLAUDE.md updated with concise summary
-- ✅ Detailed plan saved to plan.md
-
-## Next Steps
-
-When planning is complete, inform the user:
+Report to user:
 
 ```
-✅ Planning complete for session: ${SESSION_ID}
+✅ Planning complete: ${SESSION_ID}
 
-📋 Implementation Approach:
-[One-sentence summary]
+📋 Approach: [One-sentence summary]
+🎯 Steps: [X] defined
+📊 Tests: [X] scenarios
+⚠️  Risks: [X] with mitigation
 
-🎯 Key Steps: [X] steps defined
-📊 Tests Planned: [X] test scenarios
-⚠️  Risks Identified: [X] with mitigation strategies
+🚀 NEXT: /code ${SESSION_ID}
 
-🚀 Next: Run `/cc:code ${SESSION_ID}` to begin implementation
-
-Session context available at:
-- Auto-loaded: .claude/sessions/${SESSION_ID}_${SESSION_DESC}/CLAUDE.md
-- Detailed plan: .claude/sessions/${SESSION_ID}_${SESSION_DESC}/plan.md
+Context: .claude/sessions/${SESSION_ID}_*/CLAUDE.md (auto-loads)
+Plan: .claude/sessions/${SESSION_ID}_*/plan.md
 ```
-
-## Efficiency Notes
-
-- **Auto-loaded context**: Session CLAUDE.md provides immediate access to findings
-- **Reference on demand**: Use @ imports for detailed exploration only when needed
-- **Token efficiency**: Concise session context + detailed reference files
-- **Context continuity**: Hierarchical memory maintains focus across phases

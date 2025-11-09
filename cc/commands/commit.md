@@ -6,99 +6,51 @@ description: Create conventional commits with proper formatting
 
 # Commit: Conventional Commits
 
-Create conventional commits for changes with type: **$1** and summary: **$2**
+Create commit with type: **$1** and summary: **$2**
 
-## Conventional Commit Types
+## Commit Types
 
-Choose the appropriate type for your commit:
-- **feat**: New feature or functionality
-- **fix**: Bug fix or error correction
-- **docs**: Documentation changes only
-- **style**: Code style changes (formatting, missing semicolons, etc.)
-- **refactor**: Code refactoring without functional changes
-- **perf**: Performance improvements
-- **test**: Adding or updating tests
-- **chore**: Maintenance tasks, dependency updates, etc.
+**feat** (new feature) | **fix** (bug fix) | **docs** (documentation) | **style** (formatting) | **refactor** (code refactoring) | **perf** (performance) | **test** (tests) | **chore** (maintenance)
 
-## Your Task
+## Process
 
-Create conventional commits following these steps:
+### 1. Review Changes
 
-1. **Review Changes**: Check git status and diff for unintended changes
-2. **Stage Appropriately**: Group related changes logically
-3. **Format Commit Message**: Use conventional commit format
-4. **Create Commit**: Make atomic commit with clear purpose
-5. **Verify History**: Ensure git log tells a clear story
-
-## Commit Process
-
-Follow these steps for proper version control:
-
-### 1. Check Current Status
 ```bash
 git status
 git diff --staged
 git diff
 ```
 
-### 2. Stage Changes Appropriately
+Verify only intended changes are included.
+
+### 2. Stage Files
+
 ```bash
-# Stage specific files
-git add <file1> <file2>
-
-# Or stage all changes if appropriate
-git add .
+git add <file1> <file2>  # Specific files
+# OR
+git add .  # All changes (if appropriate)
 ```
 
-### 3. Create Conventional Commit
-Use this format:
-```
-<type>[optional scope]: <description>
+### 3. Create Commit
 
-[optional body]
+Format: `<type>[optional scope]: <description>`
 
-[optional footer(s)]
-```
-
-Examples:
-- `feat(auth): add OAuth2 login functionality`
-- `fix(api): handle null response in user endpoint`
-- `docs(readme): update installation instructions`
-- `refactor(utils): simplify date formatting logic`
-
-### 4. Create the Commit
 ```bash
-git commit -m "type: description"
+git commit -m "$1: $2"
 ```
+
+**Examples**:
+- `feat(auth): add OAuth2 login`
+- `fix(api): handle null response`
+- `docs(readme): update installation`
+- `refactor: simplify date formatting`
 
 ## Best Practices
 
-- **Keep it atomic**: One logical change per commit
-- **Be specific**: Describe what changed, not why
-- **Use present tense**: "add feature" not "added feature"
-- **Limit scope**: Avoid mixing unrelated changes
-- **Impressive**: Make commits easy to understand and reverse
+- **Atomic commits**: One logical change per commit
+- **Present tense**: "add feature" not "added feature"
+- **Specific**: Describe what changed
+- **Focused scope**: Avoid mixing unrelated changes
 
-## Examples
-
-```bash
-# Feature commit
-git commit -m "feat(ui): add dark mode toggle"
-
-# Bug fix commit
-git commit -m "fix(auth): resolve login token expiration issue"
-
-# Documentation commit
-git commit -m "docs(api): update authentication endpoint docs"
-
-# Refactoring commit
-git commit -m "refactor(components): extract shared button logic"
-```
-
-## Validation
-
-Before completing:
-- **Review staged changes**: Ensure only intended changes are included
-- **Check commit message**: Verify conventional commit format
-- **Consider scope**: Is this commit atomic and focused?
-- **Wait user approval**: Confirm before creating the commit
+Wait for user approval before committing.

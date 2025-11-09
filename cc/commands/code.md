@@ -4,106 +4,50 @@ argument-hint: "[session_id] [implementation focus] [target files/components]"
 description: Implement solution with auto-loaded session context and plan
 ---
 
-# Code: Implementation and Execution
+# Code: Implementation
 
 Implement solution for session: **$1** with focus: **$2**$3
 
-## Session Validation and Context Loading
-
-Validate session and plan exist, noting auto-loaded context:
+## Session Validation
 
 ```bash
-# Extract session ID
 SESSION_ID="$1"
+SESSION_DIR=$(find .claude/sessions -name "${SESSION_ID}_*" -type d 2>/dev/null | head -1)
 
-# Find session directory (avoid command substitution - Bash tool limitation)
-find .claude/sessions -name "${SESSION_ID}_*" -type d 2>/dev/null | head -1 > /tmp/session_dir.txt
+[ -z "$SESSION_DIR" ] && echo "❌ Session not found: $SESSION_ID" && exit 1
+[ ! -f "$SESSION_DIR/plan.md" ] && echo "❌ No plan found. Run /plan first" && exit 1
 
-# Read the first result
-read SESSION_DIR < /tmp/session_dir.txt
-rm -f /tmp/session_dir.txt
+echo "✅ Loaded: $SESSION_ID"
+echo "📋 Context: CLAUDE.md (auto-loaded) | plan.md | explore.md"
 
-if [ -z "$SESSION_DIR" ]; then
-    echo "❌ Error: Session $SESSION_ID not found"
-    echo ""
-    echo "Available sessions:"
-    ls -la .claude/sessions/ 2>/dev/null || echo "No sessions found"
-    exit 1
-fi
-
-# Validate plan exists
-if [ ! -f "$SESSION_DIR/plan.md" ]; then
-    echo "❌ Error: No implementation plan found for this session"
-    echo "Please run /cc:plan $SESSION_ID first"
-    exit 1
-fi
-
-echo "✅ Session loaded: $SESSION_ID"
-echo "📁 Directory: $SESSION_DIR"
-echo ""
-echo "📋 Context Available:"
-echo "  - Session CLAUDE.md: Auto-loaded (key findings + plan summary)"
-echo "  - Detailed plan: @$SESSION_DIR/plan.md"
-echo "  - Exploration details: @$SESSION_DIR/explore.md"
-echo ""
-
-# Update session status
 sed -i "s/Phase: planning/Phase: implementation/" "$SESSION_DIR/CLAUDE.md" 2>/dev/null || true
 ```
 
-**Context Access**:
-- Session CLAUDE.md with key findings and plan summary is auto-loaded
-- Reference detailed plan.md if you need comprehensive step-by-step details
-- Reference explore.md if you need original exploration findings
+**Context Available**:
+- Session CLAUDE.md (auto-loaded): Findings + plan summary
+- Detailed plan: @$SESSION_DIR/plan.md
+- Exploration: @$SESSION_DIR/explore.md
 
-## Your Task
+## Implementation Task
 
-Execute the implementation plan with attention to:
-
-1. **Review Plan**: Session CLAUDE.md contains plan summary; reference plan.md for details
-2. **Code Quality**: Write clean, maintainable code following project conventions
-3. **Best Practices**: Apply established patterns from exploration findings
-4. **Error Handling**: Implement proper error handling and validation
-5. **Testing**: Add appropriate tests as specified in plan
-6. **Documentation**: Update necessary documentation
-7. **Incremental Progress**: Make small, testable changes
-8. **Save Progress**: Update session CLAUDE.md with implementation status
-
-## Implementation Approach
-
-Follow these principles:
-
-### Incremental Development
-- Make small, testable increments
-- Verify each step before proceeding
-- Follow the step-by-step plan from planning phase
+Execute plan following these principles:
 
 ### Quality Standards
-- **Code Style**: Maintain consistency with existing codebase
-- **Performance**: Consider efficiency and resource usage
-- **Security**: Follow security best practices
-- **Error Handling**: Handle edge cases and unexpected inputs
+- **Code style**: Match existing conventions
+- **Error handling**: Handle edge cases
+- **Testing**: Add tests per plan
+- **Documentation**: Update as needed
+- **Security**: Follow best practices
 
-### Validation
-- Test each component as you build it
-- Verify integration with existing systems
-- Check that success criteria from plan are met
+### Approach
+- Make small, testable increments
+- Verify each step before proceeding
+- Follow plan step-by-step
+- Self-review for potential issues
 
-## Quality Assurance
+## Deliverables
 
-During implementation, ensure:
-
-- ✅ **Code Review**: Self-review for potential issues
-- ✅ **Test Coverage**: Add comprehensive tests per plan
-- ✅ **Edge Cases**: Handle error conditions
-- ✅ **Integration**: Works with existing systems
-- ✅ **Documentation**: Update code comments and docs
-
-## Session Persistence
-
-### 1. Create code.md
-
-Save concise implementation summary to `$SESSION_DIR/code.md`:
+Save implementation summary to `$SESSION_DIR/code.md`:
 
 ```markdown
 # Implementation Summary: [Feature Name]
@@ -114,46 +58,29 @@ Save concise implementation summary to `$SESSION_DIR/code.md`:
 - Phase: Implementation
 - Focus: $2$3
 
-## Implementation Summary
+## Summary
 [Brief overview of what was implemented]
 
 ## Key Changes
 1. **[File/Component]**: [What changed and why]
 2. **[File/Component]**: [What changed and why]
-3. **[File/Component]**: [What changed and why]
 
 ## Tests Added/Updated
 - [Test file]: [What it tests]
-- [Test file]: [What it tests]
-
-## Critical Issues Encountered
-[Any challenges or deviations from plan]
 
 ## Validation Results
-- ✅ [Success criterion 1]: Verified
-- ✅ [Success criterion 2]: Verified
-- ✅ [Success criterion 3]: Verified
-
-## Documentation Updated
-- [File]: [What was updated]
+- ✅ [Success criterion]: Verified
 
 ## Status
-[Completed | Pending user approval | Needs review]
+[Completed | Pending user approval]
 ```
 
-**IMPORTANT**: Keep concise - essential outcomes only, no verbose explanations.
+Update `$SESSION_DIR/CLAUDE.md` with implementation summary:
 
-### 2. Update Session CLAUDE.md
-
-Add implementation summary to session CLAUDE.md:
-
-```bash
-cat >> "$SESSION_DIR/CLAUDE.md" << 'EOF'
-
+```markdown
 ## Implementation Phase Complete
 
 ### Changes Made
-- [File/Component]: [Brief description]
 - [File/Component]: [Brief description]
 
 ### Tests Added
@@ -164,35 +91,19 @@ cat >> "$SESSION_DIR/CLAUDE.md" << 'EOF'
 ✅ Implementation complete - awaiting user approval
 
 ### References
-Implementation details: @.claude/sessions/${SESSION_ID}_${SESSION_DESC}/code.md
-EOF
+Implementation details: @.claude/sessions/${SESSION_ID}_*/code.md
 ```
-
-## Pre-Completion Checklist
-
-Before requesting user approval:
-
-- ✅ All planned changes implemented
-- ✅ Tests added/updated per plan
-- ✅ Code follows project conventions
-- ✅ Error handling implemented
-- ✅ Documentation updated
-- ✅ Integration verified
-- ✅ Success criteria from plan met
-- ✅ code.md saved with summary
-- ✅ Session CLAUDE.md updated
 
 ## User Approval
 
-**IMPORTANT**: Wait for user approval before considering implementation complete.
+**IMPORTANT**: Wait for user approval before finalizing.
 
-Present implementation for review:
+Present for review:
 
 ```
-✅ Implementation complete for session: ${SESSION_ID}
+✅ Implementation complete: ${SESSION_ID}
 
-📝 Summary:
-[Brief description of what was implemented]
+📝 Summary: [Brief description]
 
 🔧 Changes:
 - [X] files modified
@@ -204,28 +115,19 @@ Present implementation for review:
 - Tests passing
 - Integration verified
 
-⏸️  Awaiting user approval to finalize
+⏸️  Awaiting user approval
 
-Session details:
-- Context: .claude/sessions/${SESSION_ID}_${SESSION_DESC}/CLAUDE.md
-- Summary: .claude/sessions/${SESSION_ID}_${SESSION_DESC}/code.md
+Session: .claude/sessions/${SESSION_ID}_*/CLAUDE.md
+Summary: .claude/sessions/${SESSION_ID}_*/code.md
 ```
 
-After user approval, suggest next steps:
+After user approval:
 
 ```
 🎉 Implementation approved!
 
 Next steps:
-1. Run `/cc:commit feat "description"` to create conventional commit
-2. Push changes to remote repository
+1. /commit feat "[description]" - Create conventional commit
+2. Push changes to remote
 3. Create pull request for review
 ```
-
-## Efficiency Notes
-
-- **Auto-loaded context**: Session CLAUDE.md provides immediate access to plan
-- **Reference on demand**: Access detailed plan.md only when needed for specifics
-- **Incremental validation**: Test as you go to catch issues early
-- **Token efficiency**: Concise summaries in session, detailed logs in files
-- **Human-in-the-loop**: User approval ensures quality control
