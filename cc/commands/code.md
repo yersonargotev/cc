@@ -13,26 +13,42 @@ Implement solution for session: **$1** with focus: **$2**$3
 Validate session and plan exist, noting auto-loaded context:
 
 ```bash
-# Extract session ID and validate
-SESSION_ID="$1"
-SESSION_DIR=$(find .claude/sessions -name "${SESSION_ID}_*" -type d | head -1)
+# Resolve session reference (supports @latest, @{N}, short IDs, slug search)
+SESSION_REF="$1"
 
-if [ -z "$SESSION_DIR" ]; then
-    echo "❌ Error: Session $SESSION_ID not found"
+echo "🔍 Resolving session reference: $SESSION_REF"
+SESSION_ID=$(bash "$CLAUDE_PLUGIN_DIR/scripts/resolve-session-id.sh" "$SESSION_REF" 2>&1)
+
+if [ $? -ne 0 ]; then
+    echo "❌ Error: Failed to resolve session reference '$SESSION_REF'"
     echo ""
-    echo "Available sessions:"
-    ls -la .claude/sessions/ 2>/dev/null || echo "No sessions found"
+    echo "$SESSION_ID"  # Error message from resolver
+    echo ""
+    echo "💡 Available commands:"
+    echo "   /session-list              - View all sessions"
+    echo "   /cc:explore <description>  - Create new session"
+    exit 1
+fi
+
+echo "✅ Resolved: $SESSION_REF → $SESSION_ID"
+echo ""
+
+# Session directory (v2 format - no wildcard needed)
+SESSION_DIR=".claude/sessions/${SESSION_ID}"
+
+if [ ! -d "$SESSION_DIR" ]; then
+    echo "❌ Error: Session directory not found: $SESSION_DIR"
     exit 1
 fi
 
 # Validate plan exists
 if [ ! -f "$SESSION_DIR/plan.md" ]; then
     echo "❌ Error: No implementation plan found for this session"
-    echo "Please run /cc:plan $SESSION_ID first"
+    echo ""
+    echo "Please run: /cc:plan $SESSION_REF"
     exit 1
 fi
 
-echo "✅ Session loaded: $SESSION_ID"
 echo "📁 Directory: $SESSION_DIR"
 echo ""
 echo "📋 Context Available:"
@@ -41,8 +57,22 @@ echo "  - Detailed plan: @$SESSION_DIR/plan.md"
 echo "  - Exploration details: @$SESSION_DIR/explore.md"
 echo ""
 
-# Update session status
-sed -i "s/Phase: planning/Phase: implementation/" "$SESSION_DIR/CLAUDE.md" 2>/dev/null || true
+# Update session phase
+if [ -f "$SESSION_DIR/CLAUDE.md" ]; then
+    if sed --version 2>&1 | grep -q "GNU"; then
+        sed -i "s/Phase: planning/Phase: implementation/" "$SESSION_DIR/CLAUDE.md" 2>/dev/null || true
+        sed -i "s/Phase: explore/Phase: implementation/" "$SESSION_DIR/CLAUDE.md" 2>/dev/null || true
+    else
+        sed -i '' "s/Phase: planning/Phase: implementation/" "$SESSION_DIR/CLAUDE.md" 2>/dev/null || true
+        sed -i '' "s/Phase: explore/Phase: implementation/" "$SESSION_DIR/CLAUDE.md" 2>/dev/null || true
+    fi
+fi
+
+# Update index phase
+if [ -x "$CLAUDE_PLUGIN_DIR/scripts/session-index.sh" ]; then
+    bash "$CLAUDE_PLUGIN_DIR/scripts/session-index.sh" update "$SESSION_ID" \
+      "phase=implementation" &>/dev/null || true
+fi
 ```
 
 **Context Access**:
@@ -158,7 +188,7 @@ cat >> "$SESSION_DIR/CLAUDE.md" << 'EOF'
 ✅ Implementation complete - awaiting user approval
 
 ### References
-Implementation details: @.claude/sessions/${SESSION_ID}_${SESSION_DESC}/code.md
+Implementation details: @.claude/sessions/${SESSION_ID}/code.md
 EOF
 ```
 
@@ -201,8 +231,10 @@ Present implementation for review:
 ⏸️  Awaiting user approval to finalize
 
 Session details:
-- Context: .claude/sessions/${SESSION_ID}_${SESSION_DESC}/CLAUDE.md
-- Summary: .claude/sessions/${SESSION_ID}_${SESSION_DESC}/code.md
+- Context: .claude/sessions/${SESSION_ID}/CLAUDE.md
+- Summary: .claude/sessions/${SESSION_ID}/code.md
+
+💡 Quick references: @latest, @, $(echo "$SESSION_ID" | cut -d'-' -f3), @/$(echo "$SESSION_ID" | cut -d'-' -f4-)
 ```
 
 After user approval, suggest next steps:

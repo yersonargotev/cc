@@ -13,19 +13,34 @@ Create comprehensive implementation plan for session: **$1** with approach: **$2
 Validate session exists and note that session CLAUDE.md is auto-loaded:
 
 ```bash
-# Extract session ID and validate
-SESSION_ID="$1"
-SESSION_DIR=$(find .claude/sessions -name "${SESSION_ID}_*" -type d | head -1)
+# Resolve session reference (supports @latest, @{N}, short IDs, slug search)
+SESSION_REF="$1"
 
-if [ -z "$SESSION_DIR" ]; then
-    echo "❌ Error: Session $SESSION_ID not found"
+echo "🔍 Resolving session reference: $SESSION_REF"
+SESSION_ID=$(bash "$CLAUDE_PLUGIN_DIR/scripts/resolve-session-id.sh" "$SESSION_REF" 2>&1)
+
+if [ $? -ne 0 ]; then
+    echo "❌ Error: Failed to resolve session reference '$SESSION_REF'"
     echo ""
-    echo "Available sessions:"
-    ls -la .claude/sessions/ 2>/dev/null || echo "No sessions found"
+    echo "$SESSION_ID"  # Error message from resolver
+    echo ""
+    echo "💡 Available commands:"
+    echo "   /session-list              - View all sessions"
+    echo "   /cc:explore <description>  - Create new session"
     exit 1
 fi
 
-echo "✅ Session loaded: $SESSION_ID"
+echo "✅ Resolved: $SESSION_REF → $SESSION_ID"
+echo ""
+
+# Session directory (v2 format - no wildcard needed)
+SESSION_DIR=".claude/sessions/${SESSION_ID}"
+
+if [ ! -d "$SESSION_DIR" ]; then
+    echo "❌ Error: Session directory not found: $SESSION_DIR"
+    exit 1
+fi
+
 echo "📁 Directory: $SESSION_DIR"
 echo ""
 echo "📋 Context:"
@@ -33,8 +48,20 @@ echo "  - Session CLAUDE.md: Auto-loaded by Claude Code"
 echo "  - Detailed exploration: @$SESSION_DIR/explore.md"
 echo ""
 
-# Update session status
-sed -i "s/Phase: explore/Phase: planning/" "$SESSION_DIR/CLAUDE.md" 2>/dev/null || true
+# Update session phase
+if [ -f "$SESSION_DIR/CLAUDE.md" ]; then
+    if sed --version 2>&1 | grep -q "GNU"; then
+        sed -i "s/Phase: explore/Phase: planning/" "$SESSION_DIR/CLAUDE.md" 2>/dev/null || true
+    else
+        sed -i '' "s/Phase: explore/Phase: planning/" "$SESSION_DIR/CLAUDE.md" 2>/dev/null || true
+    fi
+fi
+
+# Update index phase
+if [ -x "$CLAUDE_PLUGIN_DIR/scripts/session-index.sh" ]; then
+    bash "$CLAUDE_PLUGIN_DIR/scripts/session-index.sh" update "$SESSION_ID" \
+      "phase=planning" &>/dev/null || true
+fi
 ```
 
 **Note**: The session CLAUDE.md is automatically loaded by Claude Code's hierarchical memory system. You have immediate access to all key findings without manual file reads.
@@ -173,7 +200,7 @@ cat >> "$SESSION_DIR/CLAUDE.md" << 'EOF'
 - [Criterion 2]
 
 ### References
-Detailed plan: @.claude/sessions/${SESSION_ID}_${SESSION_DESC}/plan.md
+Detailed plan: @.claude/sessions/${SESSION_ID}/plan.md
 EOF
 ```
 
@@ -204,11 +231,13 @@ When planning is complete, inform the user:
 📊 Tests Planned: [X] test scenarios
 ⚠️  Risks Identified: [X] with mitigation strategies
 
-🚀 Next: Run `/cc:code ${SESSION_ID}` to begin implementation
+🚀 Next: Run `/cc:code @latest` to begin implementation
 
 Session context available at:
-- Auto-loaded: .claude/sessions/${SESSION_ID}_${SESSION_DESC}/CLAUDE.md
-- Detailed plan: .claude/sessions/${SESSION_ID}_${SESSION_DESC}/plan.md
+- Auto-loaded: .claude/sessions/${SESSION_ID}/CLAUDE.md
+- Detailed plan: .claude/sessions/${SESSION_ID}/plan.md
+
+💡 Quick references: @latest, @, $(echo "$SESSION_ID" | cut -d'-' -f3), @/$(echo "$SESSION_ID" | cut -d'-' -f4-)
 ```
 
 ## Efficiency Notes
