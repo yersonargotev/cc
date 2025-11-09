@@ -1,6 +1,12 @@
 #!/bin/bash
 # UserPromptSubmit Hook: Load git and session context on every prompt
 # Provides helpful context without cluttering conversation
+#
+# UserPromptSubmit hooks run when the user submits a prompt, before Claude processes it
+# They receive the prompt data via stdin and can inject additional context
+
+# Read stdin (prompt data - available but not needed for this use case)
+cat > /dev/null
 
 # Check if we're in a git repository
 if git rev-parse --git-dir > /dev/null 2>&1; then
@@ -32,5 +38,5 @@ if [ -d ".claude/sessions" ]; then
     fi
 fi
 
-# Silent success
+# Success - output is shown to user as context
 exit 0
