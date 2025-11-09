@@ -10,25 +10,48 @@ Orchestrate comprehensive exploration combining codebase analysis with up-to-dat
 
 ## Session Setup
 
-Generate unique session ID and create session directory with CLAUDE.md:
+Generate v2 session ID and create session directory with CLAUDE.md:
 
 ```bash
-# Generate session ID
-SESSION_ID=$(date +%Y%m%d_%H%M%S)_$(openssl rand -hex 4)
-SESSION_DESC=$(echo "$1" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/_/g' | head -c 20)
-SESSION_DIR=".claude/sessions/${SESSION_ID}_${SESSION_DESC}"
+# Generate v2 session ID (zero dependencies)
+echo "🔨 Generating session ID..."
+SESSION_ID=$(bash "$CLAUDE_PLUGIN_DIR/scripts/generate-session-id.sh" "$1")
 
-# Create session structure
+if [ $? -ne 0 ] || [ -z "$SESSION_ID" ]; then
+  echo "❌ Failed to generate session ID"
+  exit 1
+fi
+
+echo "✅ Generated: $SESSION_ID"
+echo ""
+
+# Extract slug from v2 ID (format: v2-YYYYMMDDTHHmmss-base32-slug)
+SLUG=$(echo "$SESSION_ID" | cut -d'-' -f4-)
+
+# Get current git branch
+BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "main")
+
+# Create session directory
+SESSION_DIR=".claude/sessions/${SESSION_ID}"
 mkdir -p "$SESSION_DIR"
 
 # Initialize session CLAUDE.md
+TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ" 2>/dev/null || date +"%Y-%m-%dT%H:%M:%SZ")
+
 cat > "$SESSION_DIR/CLAUDE.md" << EOF
 # Session: $1
 
 ## Status
 Phase: explore
 Started: $(date '+%Y-%m-%d %H:%M')
+Last Updated: $(date '+%Y-%m-%d %H:%M')
 Session ID: ${SESSION_ID}
+
+## Technical Details
+- Session Format: v2
+- Branch: $BRANCH
+- Short ID: $(echo "$SESSION_ID" | cut -d'-' -f3)
+- Slug: $SLUG
 
 ## Objective
 $1
@@ -40,13 +63,48 @@ $2
 [To be populated during exploration]
 
 ## Next Steps
-Run \`/plan ${SESSION_ID}\` to create implementation plan
+Run \`/cc:plan @latest\` to create implementation plan
 
 ## References
-@.claude/sessions/${SESSION_ID}_${SESSION_DESC}/explore.md
+@.claude/sessions/${SESSION_ID}/explore.md
 EOF
 
-echo "✅ Session initialized: ${SESSION_ID}"
+# Initialize activity log
+cat > "$SESSION_DIR/activity.log" << EOF
+[$TIMESTAMP] Session created
+[$TIMESTAMP] Description: $1
+[$TIMESTAMP] Branch: $BRANCH
+EOF
+
+# Add session to index
+echo "📇 Adding to session index..."
+if [ -x "$CLAUDE_PLUGIN_DIR/scripts/session-index.sh" ]; then
+  bash "$CLAUDE_PLUGIN_DIR/scripts/session-index.sh" add \
+    "$SESSION_ID" \
+    "$SLUG" \
+    "exploration" \
+    "in_progress" \
+    "$BRANCH" || echo "⚠️  Warning: Failed to add to index"
+
+  # Set as @latest
+  bash "$CLAUDE_PLUGIN_DIR/scripts/session-index.sh" set-ref "@latest" "$SESSION_ID" || true
+fi
+
+echo ""
+echo "✅ Session created successfully!"
+echo ""
+echo "📋 Session Details:"
+echo "  ID: $SESSION_ID"
+echo "  Name: $SLUG"
+echo "  Phase: Exploration"
+echo "  Branch: $BRANCH"
+echo ""
+echo "💡 Quick references:"
+echo "  @latest              - Always refers to this session (until next session)"
+echo "  @                    - Shorthand for @latest"
+echo "  $(echo "$SESSION_ID" | cut -d'-' -f3)             - Short ID (8 chars)"
+echo "  @/$SLUG - Slug search"
+echo ""
 echo "📁 Directory: $SESSION_DIR"
 ```
 
@@ -310,10 +368,10 @@ Run \`/plan ${SESSION_ID}\` to create detailed implementation plan
 
 ## References
 
-- Code Analysis: @.claude/sessions/${SESSION_ID}_${SESSION_DESC}/code-search.md
-- Web Research: @.claude/sessions/${SESSION_ID}_${SESSION_DESC}/web-research.md
-- Synthesis: @.claude/sessions/${SESSION_ID}_${SESSION_DESC}/synthesis.md
-- Full Report: @.claude/sessions/${SESSION_ID}_${SESSION_DESC}/explore.md
+- Code Analysis: @.claude/sessions/${SESSION_ID}/code-search.md
+- Web Research: @.claude/sessions/${SESSION_ID}/web-research.md
+- Synthesis: @.claude/sessions/${SESSION_ID}/synthesis.md
+- Full Report: @.claude/sessions/${SESSION_ID}/explore.md
 ```
 
 ### 2. Create Comprehensive explore.md
@@ -386,7 +444,7 @@ The synthesis has identified the following priorities for implementation plannin
 ## Session Information
 
 **Session ID**: ${SESSION_ID}
-**Session Directory**: .claude/sessions/${SESSION_ID}_${SESSION_DESC}/
+**Session Directory**: .claude/sessions/${SESSION_ID}/
 **Completed**: $(date '+%Y-%m-%d %H:%M')
 
 **Files Generated**:
@@ -464,7 +522,7 @@ WEB RESEARCH:
 📁 SESSION DETAILS:
 
 Session ID: ${SESSION_ID}
-Directory: .claude/sessions/${SESSION_ID}_${SESSION_DESC}/
+Directory: .claude/sessions/${SESSION_ID}/
 
 Files:
 - CLAUDE.md (session context - auto-loads in next phase)
@@ -475,9 +533,9 @@ Files:
 
 🚀 NEXT STEP:
 
-Run `/plan ${SESSION_ID}` to create detailed implementation plan based on these findings.
+Run `/cc:plan @latest` to create detailed implementation plan based on these findings.
 
-Session context will auto-load from: .claude/sessions/${SESSION_ID}_${SESSION_DESC}/CLAUDE.md
+Session context will auto-load from: .claude/sessions/${SESSION_ID}/CLAUDE.md
 ```
 
 ## Optional Flags (Future Enhancement)

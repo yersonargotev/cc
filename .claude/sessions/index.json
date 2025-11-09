@@ -1,0 +1,23 @@
+{
+  "version": "1.0",
+  "created": "2025-11-09T19:40:53Z",
+  "sessions": {
+    "v2-20251109T194200-n7c3fa9k-phase-2-test": {
+      "slug": "phase-2-test",
+      "created": "2025-11-09T19:40:53Z",
+      "updated": "2025-11-09T19:40:53Z",
+      "phase": "exploration",
+      "status": "in_progress",
+      "branch": "claude/integrate-session-manager-v2",
+      "tags": [],
+      "description": ""
+    }
+  },
+  "refs": {
+    "@latest": "v2-20251109T194200-n7c3fa9k-phase-2-test"
+  },
+  "settings": {
+    "retention_days": 90,
+    "auto_archive": true
+  }
+}
