@@ -1,0 +1,57 @@
+{
+  "SessionStart": [
+    {
+      "matcher": "*",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "bash \"$CLAUDE_PLUGIN_DIR\"/hooks/session-start/load-active-session.sh"
+        }
+      ]
+    }
+  ],
+  "SessionEnd": [
+    {
+      "matcher": "*",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "bash \"$CLAUDE_PLUGIN_DIR\"/hooks/session-end/save-session-state.sh"
+        }
+      ]
+    }
+  ],
+  "PreToolUse": [
+    {
+      "matcher": "SlashCommand",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "bash \"$CLAUDE_PLUGIN_DIR\"/hooks/pre-tool-use/validate-session.sh"
+        }
+      ]
+    }
+  ],
+  "Stop": [
+    {
+      "matcher": "*",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "bash \"$CLAUDE_PLUGIN_DIR\"/hooks/stop/auto-save-session.sh"
+        }
+      ]
+    }
+  ],
+  "UserPromptSubmit": [
+    {
+      "matcher": "",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "bash \"$CLAUDE_PLUGIN_DIR\"/hooks/user-prompt-submit/load-context.sh"
+        }
+      ]
+    }
+  ]
+}
