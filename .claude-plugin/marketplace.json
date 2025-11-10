@@ -1,29 +1,15 @@
 {
-  "name": "cc-mkp",
+  "name": "cc-local-dev",
   "owner": {
     "name": "Yerson",
     "email": "yersonargotev@gmail.com"
-  },
-  "metadata": {
-    "description": "Complete workflow system with research, planning, implementation, testing, and review phases. Includes automated session management with hooks.",
-    "version": "1.0.0"
   },
   "plugins": [
     {
       "name": "cc",
       "source": "./cc",
-      "description": "Complete senior engineer workflow system with research, planning, implementation, testing, and review phases. Includes automated session management with hooks.",
-      "version": "1.0.0",
-      "author": {
-        "name": "Yerson",
-        "email": "yersonargotev@gmail.com"
-      },
-      "category": "productivity",
-      "keywords": [
-        "workflow",
-        "automation",
-        "session-management"
-      ]
+      "description": "CC workflow system with Session Manager v2",
+      "version": "3.0.0"
     }
   ]
 }
