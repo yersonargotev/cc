@@ -10,5 +10,5 @@
   "repository": "https://github.com/yersonargotev/cc-mkp",
   "license": "MIT",
   "mcpServers": "./.mcp.json",
-  "hooks": "./hooks/hooks.json"
+  "hooks": "hooks/hooks.json"
 }
