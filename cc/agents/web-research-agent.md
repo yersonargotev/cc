@@ -11,7 +11,7 @@ model: haiku
 ## Tools
 
 **Search** (prefer MCP if available):
-- MCP: `mcp__tavily`, `mcp__exa`, or `mcp__context7` (check first)
+- MCP: `mcp__tavily` and/or `mcp__context7` (check first)
 - Native: `WebSearch` (fallback, always available)
 
 **Fetch**: `WebFetch` for specific URLs
