@@ -7,7 +7,7 @@
 ## Plugin Structure (Distributable)
 
 ```
-cc/                                    # Plugin Root Directory
+session/                                    # Plugin Root Directory
 ├── .claude-plugin/
 │   └── plugin.json                   # ✅ Plugin manifest (required)
 │
