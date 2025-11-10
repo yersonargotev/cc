@@ -8,7 +8,7 @@ A Claude Code plugin implementing a comprehensive senior engineer workflow syste
 🚀 **Parallel Exploration**: 3-5x faster using specialized subagents
 🧠 **Smart Memory**: CLAUDE.md hierarchical memory with auto-loading
 🔒 **Safety Hooks**: Validation and auto-save capabilities
-📊 **Session Management**: Persistent context across phases
+📊 **Session Management v2**: Git-like references (@latest, short IDs, slug search)
 🎯 **Human-in-the-Loop**: User approval for critical operations
 
 ## Quick Start
@@ -23,21 +23,83 @@ claude code plugin install /path/to/cc
 claude code plugin install cc
 ```
 
-### Basic Usage
+### Basic Usage (v3.0 with Git-like References)
 
 ```bash
 # 1. Explore: Research and gather context
 /cc:explore "add user authentication" "JWT-based"
+# → Creates: v2-20251109T143045-n7c3fa9k-add-user-authentication
 
-# 2. Plan: Create implementation strategy
-/cc:plan 20251109_143045_abc123de "implement JWT auth"
+# 2. Plan: Use @latest reference (easiest!)
+/cc:plan @latest
+
+# Alternative: Use @ shorthand
+/cc:plan @
+
+# Alternative: Use short ID (8 chars)
+/cc:plan n7c3fa9k
+
+# Alternative: Use slug search
+/cc:plan @/add-user-auth
 
 # 3. Code: Execute the plan
-/cc:code 20251109_143045_abc123de "focus on login endpoint"
+/cc:code @latest
 
 # 4. Commit: Create conventional commit
 /cc:commit feat "add JWT authentication system"
+
+# 5. Manage sessions
+/session-list                    # View all sessions
+/session-list auth --limit 10    # Filter by keyword
 ```
+
+### Session Management (v3.0)
+
+The CC plugin now includes Session Manager v2 with Git-like references:
+
+```bash
+# Use @latest reference (easiest!)
+/cc:plan @latest
+/cc:code @
+
+# Use short ID (8 chars)
+/cc:plan n7c3fa9k
+
+# Use slug search
+/cc:plan @/add-user-auth
+
+# Manage sessions
+/session-list                    # View all sessions
+/session-list auth --limit 10    # Filter by keyword
+/session-migrate --execute       # Migrate v1 → v2
+/session-rebuild-index          # Rebuild index
+```
+
+#### Session ID Format (v2)
+
+```
+v2-YYYYMMDDTHHmmss-base32random-kebab-slug
+
+Example:
+v2-20251109T183846-n7c3fa9k-implement-user-authentication-with-oauth
+
+Components:
+  v2              - Version prefix
+  20251109T183846 - ISO8601 timestamp (sortable)
+  n7c3fa9k        - 8-char base32 random ID
+  implement-...   - Kebab-case slug
+```
+
+#### Quick References
+
+| Reference | Description | Example |
+|-----------|-------------|---------|
+| `@latest` | Most recent session | `/cc:plan @latest` |
+| `@` | Shorthand for @latest | `/cc:code @` |
+| `@{N}` | Nth previous session | `/cc:plan @{1}` |
+| Short ID | 8-char prefix match | `/cc:code n7c3fa9k` |
+| `@/slug` | Slug search | `/cc:plan @/auth` |
+| Full ID | Complete session ID | `/cc:code v2-20251109T...` |
 
 ## Architecture
 

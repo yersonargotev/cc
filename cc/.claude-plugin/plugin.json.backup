@@ -1,0 +1,13 @@
+{
+  "name": "cc",
+  "version": "2.0.0",
+  "description": "Senior engineer workflow system with multi-phase development (explore → plan → code → commit), parallel subagent exploration, CLAUDE.md hierarchical memory, and automated lifecycle hooks. 4x faster exploration, 8x better context efficiency.",
+  "author": {
+    "name": "Yerson",
+    "email": "yersonargotev@gmail.com"
+  },
+  "homepage": "https://github.com/yersonargotev/cc-mkp",
+  "repository": "https://github.com/yersonargotev/cc-mkp",
+  "license": "MIT",
+  "mcpServers": "./.mcp.json"
+}

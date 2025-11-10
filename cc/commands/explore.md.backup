@@ -13,45 +13,16 @@ Comprehensive exploration combining codebase analysis + web research for: **$1**
 Create session with unique ID:
 
 ```bash
-# Generate v2 session ID (zero dependencies)
-echo "🔨 Generating session ID..."
-SESSION_ID=$(bash "$CLAUDE_PLUGIN_DIR/scripts/generate-session-id.sh" "$1")
-
-if [ $? -ne 0 ] || [ -z "$SESSION_ID" ]; then
-  echo "❌ Failed to generate session ID"
-  exit 1
-fi
-
-echo "✅ Generated: $SESSION_ID"
-echo ""
-
-# Extract slug from v2 ID (format: v2-YYYYMMDDTHHmmss-base32-slug)
-SLUG=$(echo "$SESSION_ID" | cut -d'-' -f4-)
-
-# Get current git branch
-BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "main")
-
-# Create session directory
-SESSION_DIR=".claude/sessions/${SESSION_ID}"
+SESSION_ID=$(date +%Y%m%d_%H%M%S)_$(openssl rand -hex 4)
+SESSION_DESC=$(echo "$1" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/_/g' | head -c 20)
+SESSION_DIR=".claude/sessions/${SESSION_ID}_${SESSION_DESC}"
 mkdir -p "$SESSION_DIR"
-
-# Initialize session CLAUDE.md
-TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ" 2>/dev/null || date +"%Y-%m-%dT%H:%M:%SZ")
 
 cat > "$SESSION_DIR/CLAUDE.md" << EOF
 # Session: $1
 
 ## Status
-Phase: explore
-Started: $(date '+%Y-%m-%d %H:%M')
-Last Updated: $(date '+%Y-%m-%d %H:%M')
-Session ID: ${SESSION_ID}
-
-## Technical Details
-- Session Format: v2
-- Branch: $BRANCH
-- Short ID: $(echo "$SESSION_ID" | cut -d'-' -f3)
-- Slug: $SLUG
+Phase: explore | Started: $(date '+%Y-%m-%d %H:%M') | ID: ${SESSION_ID}
 
 ## Objective
 $1
@@ -60,52 +31,14 @@ $1
 $2
 
 ## Key Findings
-[To be populated during exploration]
+[Populated after synthesis]
 
 ## Next Steps
-Run \`/cc:plan @latest\` to create implementation plan
-
-## References
-@.claude/sessions/${SESSION_ID}/explore.md
+Run \`/plan ${SESSION_ID}\`
 EOF
 
-# Initialize activity log
-cat > "$SESSION_DIR/activity.log" << EOF
-[$TIMESTAMP] Session created
-[$TIMESTAMP] Description: $1
-[$TIMESTAMP] Branch: $BRANCH
-EOF
-
-# Add session to index
-echo "📇 Adding to session index..."
-if [ -x "$CLAUDE_PLUGIN_DIR/scripts/session-index.sh" ]; then
-  bash "$CLAUDE_PLUGIN_DIR/scripts/session-index.sh" add \
-    "$SESSION_ID" \
-    "$SLUG" \
-    "exploration" \
-    "in_progress" \
-    "$BRANCH" || echo "⚠️  Warning: Failed to add to index"
-
-  # Set as @latest
-  bash "$CLAUDE_PLUGIN_DIR/scripts/session-index.sh" set-ref "@latest" "$SESSION_ID" || true
-fi
-
-echo ""
-echo "✅ Session created successfully!"
-echo ""
-echo "📋 Session Details:"
-echo "  ID: $SESSION_ID"
-echo "  Name: $SLUG"
-echo "  Phase: Exploration"
-echo "  Branch: $BRANCH"
-echo ""
-echo "💡 Quick references:"
-echo "  @latest              - Always refers to this session (until next session)"
-echo "  @                    - Shorthand for @latest"
-echo "  $(echo "$SESSION_ID" | cut -d'-' -f3)             - Short ID (8 chars)"
-echo "  @/$SLUG - Slug search"
-echo ""
-echo "📁 Directory: $SESSION_DIR"
+echo "✅ Session: ${SESSION_ID}"
+echo "📁 $SESSION_DIR"
 ```
 
 ## Phase 1: Parallel Research

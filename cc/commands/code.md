@@ -8,18 +8,69 @@ description: Implement solution with auto-loaded session context and plan
 
 Implement solution for session: **$1** with focus: **$2**$3
 
-## Session Validation
+## Session Reference Resolution
+
+Resolve session reference to full session ID:
 
 ```bash
-SESSION_ID="$1"
-SESSION_DIR=$(find .claude/sessions -name "${SESSION_ID}_*" -type d 2>/dev/null | head -1)
+#!/bin/bash
+set -euo pipefail
 
-[ -z "$SESSION_DIR" ] && echo "❌ Session not found: $SESSION_ID" && exit 1
-[ ! -f "$SESSION_DIR/plan.md" ] && echo "❌ No plan found. Run /plan first" && exit 1
+# Get session reference (default to @latest)
+SESSION_REF="${1:-@latest}"
 
-echo "✅ Loaded: $SESSION_ID"
+# Resolve reference to full session ID
+if [ -x "$CLAUDE_PLUGIN_DIR/scripts/resolve-session-id.sh" ]; then
+  SESSION_ID=$(bash "$CLAUDE_PLUGIN_DIR/scripts/resolve-session-id.sh" "$SESSION_REF" 2>&1)
+  EXIT_CODE=$?
+
+  if [ $EXIT_CODE -ne 0 ]; then
+    echo "❌ Failed to resolve session reference: $SESSION_REF"
+    echo ""
+    echo "$SESSION_ID"
+    echo ""
+    echo "💡 Available commands:"
+    echo "   /session-list              - View all sessions"
+    echo "   /cc:explore <description>  - Create new session"
+    exit 1
+  fi
+
+  echo "✅ Resolved: $SESSION_REF → $SESSION_ID"
+  echo ""
+else
+  # Fallback: assume SESSION_REF is full ID
+  SESSION_ID="$SESSION_REF"
+  echo "⚠️  Session resolver not available, using: $SESSION_ID"
+  echo ""
+fi
+
+# Set SESSION_DIR for rest of command
+SESSION_DIR=".claude/sessions/${SESSION_ID}"
+
+# Verify session exists
+if [ ! -d "$SESSION_DIR" ]; then
+  echo "❌ Session not found: $SESSION_ID"
+  echo ""
+  echo "💡 Try:"
+  echo "   /session-list              - View all sessions"
+  echo "   /cc:explore <description>  - Create new session"
+  exit 1
+fi
+
+# Verify plan exists
+if [ ! -f "$SESSION_DIR/plan.md" ]; then
+  echo "❌ No plan found for this session"
+  echo ""
+  echo "💡 Create a plan first:"
+  echo "   /cc:plan $SESSION_REF"
+  exit 1
+fi
+
+echo "📁 Using session: $SESSION_DIR"
 echo "📋 Context: CLAUDE.md (auto-loaded) | plan.md | explore.md"
+echo ""
 
+# Update phase to implementation
 sed -i "s/Phase: planning/Phase: implementation/" "$SESSION_DIR/CLAUDE.md" 2>/dev/null || true
 ```
 
