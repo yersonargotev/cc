@@ -201,16 +201,16 @@ $1
 $2
 
 ## Key Findings
-[Populated after synthesis]
+[Populated after planning]
 
 ## Gap Analysis
 [Current state vs recommended practices]
 
-## Priorities
-[Immediate and short-term actions]
+## Implementation Plan Summary
+[Key steps and priorities from plan]
 
 ## Next Steps
-Run \`/plan ${SESSION_ID}\` to create detailed implementation plan
+Implementation plan ready. Run \`/code ${SESSION_ID}\` to begin
 EOF
 ```
 
@@ -229,25 +229,25 @@ Launch BOTH agents simultaneously (single message with two Task calls):
    - **Description**: "Research web best practices"
    - **Prompt**: `Research best practices and documentation for: $1. Context: $2. Focus on 2024-2025 content. Save complete research to: ${SESSION_DIR}/web-research.md. Include official docs, best practices, security considerations, and implementations.`
 
-**Execute - Synthesis**:
-After BOTH agents complete, spawn synthesis agent:
+**Execute - Planning**:
+After BOTH agents complete, spawn planning agent:
 
-3. **context-synthesis-agent**:
-   - **Subagent**: `context-synthesis-agent`
+3. **planning-agent**:
+   - **Subagent**: `planning-agent`
    - **Model**: `sonnet`
-   - **Description**: "Synthesize findings into actionable insights"
-   - **Prompt**: `Synthesize findings for: $1. Read ${SESSION_DIR}/code-search.md and ${SESSION_DIR}/web-research.md. Create comprehensive analysis comparing current state vs best practices. Save synthesis to: ${SESSION_DIR}/synthesis.md. Include gap analysis, risk assessment, and prioritized recommendations with evidence from both sources.`
+   - **Description**: "Create implementation plan from findings"
+   - **Prompt**: `Create implementation plan for: $1. Read ${SESSION_DIR}/code-search.md and ${SESSION_DIR}/web-research.md. Generate comprehensive implementation plan comparing current state vs best practices. Save plan to: ${SESSION_DIR}/plan.md. Include gap analysis, step-by-step implementation, risk mitigation, testing strategy, and success criteria with evidence from both sources.`
 
 **Update Session**:
-After synthesis completes, read `${SESSION_DIR}/synthesis.md` and update `${SESSION_DIR}/CLAUDE.md`:
-- **Key Findings**: Top 5 integrated insights (code + web evidence)
-- **Gap Analysis**: 3 critical gaps (current state → recommended state)
-- **Priorities**: Immediate (Week 1) + Short-term (Weeks 2-4) actions
-- **Status**: Update to "explore-hybrid → complete"
+After planning completes, read `${SESSION_DIR}/plan.md` and update `${SESSION_DIR}/CLAUDE.md`:
+- **Key Findings**: Top 3-5 gaps identified (current state → recommended state)
+- **Implementation Plan Summary**: High-level approach and key steps
+- **Priorities**: Critical priorities (🔴) and short-term actions (🟡)
+- **Status**: Update to "explore-hybrid → planning complete"
 
 **Report**:
 ```
-✅ Hybrid exploration complete: ${SESSION_ID}
+✅ Hybrid exploration + planning complete: ${SESSION_ID}
 
 📊 CODE ANALYSIS:
 - Files: [X] | Components: [X] | Coverage: ~[X]%
@@ -264,17 +264,20 @@ After synthesis completes, read `${SESSION_DIR}/synthesis.md` and update `${SESS
 2. [Gap]: Current [state] → Recommended [state]
 3. [Gap]: Current [state] → Recommended [state]
 
-⚡ IMMEDIATE PRIORITIES:
-1. [Priority 1 from synthesis]
-2. [Priority 2 from synthesis]
+📋 IMPLEMENTATION PLAN:
+- Steps: [X] defined
+- Tests: [X] scenarios
+- Risks: 🔴 [X] high | 🟡 [X] medium
 
-🔴 RISKS: [X] high | 🟡 [X] medium
+⚡ IMMEDIATE PRIORITIES:
+1. [Priority 1 from plan]
+2. [Priority 2 from plan]
 
 📁 SESSION: ${SESSION_ID}
-   Files: CLAUDE.md (auto-loads) | code-search.md | web-research.md | synthesis.md
+   Files: CLAUDE.md (auto-loads) | code-search.md | web-research.md | plan.md
    Directory: ${SESSION_DIR}
 
-🚀 NEXT: /plan ${SESSION_ID}
+🚀 NEXT: /code ${SESSION_ID}
 ```
 
 ## 4. Quality Standards

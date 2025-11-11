@@ -1,10 +1,18 @@
 ---
 allowed-tools: Read, Write, Task, Bash, ExitPlanMode
 argument-hint: "[session_id] [implementation approach] [key constraints]"
-description: Create detailed implementation plan with auto-loaded session context
+description: "⚠️ DEPRECATED: Use /explore in HYBRID mode instead (generates plan automatically)"
 ---
 
 # Plan: Implementation Strategy
+
+⚠️ **DEPRECATED**: This command is deprecated. Use `/explore` in HYBRID mode instead, which automatically generates an implementation plan.
+
+## Migration Guide
+- **Old workflow**: `/explore` → `/plan` → `/code`
+- **New workflow**: `/explore` (HYBRID mode) → `/code`
+
+The `/explore` command now generates the implementation plan automatically when running in HYBRID mode (code analysis + web research).
 
 Create detailed plan for session: **$1** with approach: **$2**$3
 
