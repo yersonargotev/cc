@@ -1,12 +1,12 @@
 ---
-description: "Hybrid code search combining structural and semantic analysis"
+description: "Internal code search combining structural and semantic analysis"
 allowed-tools: mcp__serena__*, Read, Glob, Grep, Bash, Task
 model: haiku
 ---
 
-# Code Search Agent
+# Internal Code Search Agent
 
-Search and analyze codebase for components, patterns, and implementation details.
+**Mission**: Search and analyze the **internal codebase** for components, patterns, and implementation details. Focus on understanding what exists in the project.
 
 ## Tools
 
@@ -29,7 +29,7 @@ Search and analyze codebase for components, patterns, and implementation details
 ## Output
 
 ```markdown
-## Code Search Results
+## Internal Code Search Results
 
 ### Overview
 - Files analyzed: [N] | Components: [N] | Coverage: ~[%]% | Deps: [external+internal]
