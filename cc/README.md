@@ -1,15 +1,16 @@
 # CC Workflow System
 
-A Claude Code plugin implementing a comprehensive senior engineer workflow system with multi-phase development, parallel subagent exploration, and intelligent memory management.
+A Claude Code plugin implementing a comprehensive senior engineer workflow system with streamlined multi-phase development, parallel research, and intelligent memory management.
 
 ## Features
 
-✨ **Multi-Phase Workflow**: Research → Plan → Implement → Commit
-🚀 **Parallel Exploration**: 3-5x faster using specialized subagents
+✨ **Streamlined Workflow**: Plan → Implement → Commit (2-step optimization)
+🚀 **Parallel Research**: 2x faster using specialized agents (code + web)
 🧠 **Smart Memory**: CLAUDE.md hierarchical memory with auto-loading
 🔒 **Safety Hooks**: Validation and auto-save capabilities
 📊 **Session Management**: Persistent context across phases
 🎯 **Human-in-the-Loop**: User approval for critical operations
+⚡ **Integrated Synthesis**: Context analysis built into planning phase
 
 ## Quick Start
 
@@ -26,17 +27,14 @@ claude code plugin install cc
 ### Basic Usage
 
 ```bash
-# 1. Explore: Research and gather context
-/cc:explore "add user authentication" "JWT-based"
+# 1. Plan: Research (code + web) and create implementation strategy
+/plan "add user authentication" "JWT-based"
 
-# 2. Plan: Create implementation strategy
-/cc:plan 20251109_143045_abc123de "implement JWT auth"
+# 2. Code: Execute the plan
+/code 20251109_143045_abc123de "focus on login endpoint"
 
-# 3. Code: Execute the plan
-/cc:code 20251109_143045_abc123de "focus on login endpoint"
-
-# 4. Commit: Create conventional commit
-/cc:commit feat "add JWT authentication system"
+# 3. Commit: Create conventional commit
+/commit feat "add JWT authentication system"
 ```
 
 ## Architecture
@@ -49,13 +47,13 @@ claude code plugin install cc
 ├── sessions/
 │   └── {SESSION_ID}_{DESC}/
 │       ├── CLAUDE.md      # Session context (auto-loaded)
-│       ├── explore.md     # Detailed exploration results
-│       ├── plan.md        # Implementation plan
+│       ├── code-search.md # Detailed code analysis
+│       ├── web-research.md# Detailed web research
+│       ├── plan.md        # Implementation plan (includes synthesis)
 │       └── code.md        # Implementation summary
 ├── agents/                # Subagent definitions
 │   ├── code-search-agent.md
-│   ├── web-research-agent.md
-│   └── context-synthesis-agent.md
+│   └── web-research-agent.md
 └── hooks/                 # Lifecycle hooks
     ├── pre-tool-use/
     ├── stop/
@@ -64,56 +62,39 @@ claude code plugin install cc
 
 ### Workflow Phases
 
-#### 1. Explore (`/cc:explore`)
+#### 1. Plan (`/plan`)
 
-**Purpose**: Comprehensive codebase research with parallel subagent analysis
+**Purpose**: Research (code + web in parallel) then create implementation plan in one step
 
 **Features**:
-- Hybrid exploration: code analysis + current best practices (2024-2025)
-- Parallel subagent execution (2x faster than sequential)
-- 8x better context efficiency
+- Parallel research: code analysis + web information (2024-2025)
+- Integrated synthesis: Context Analysis built into plan
+- 2x faster: Combined research + planning
 - Auto-creates session with CLAUDE.md
-- Professional synthesis with gap analysis
+- Evidence-based gap analysis
 
-**Modern Subagents (v2.0)**:
+**Research Agents (Haiku)**:
 - `code-search-agent`: Comprehensive code analysis (architecture + tests + dependencies + docs)
-- `web-research-agent`: Current best practices and industry standards
-- `context-synthesis-agent`: High-quality integration and recommendations
+- `web-research-agent`: Topic-related information and documentation
 
-**Output**:
-- Session CLAUDE.md with key findings and integrated insights
-- Comprehensive explore.md with detailed analysis
-- Actionable recommendations with risk assessment
-
-**Example**:
-```bash
-/cc:explore "refactor authentication system" "JWT to OAuth2"
-```
-
-#### 2. Plan (`/cc:plan`)
-
-**Purpose**: Strategic planning based on exploration findings
-
-**Features**:
-- Auto-loaded session context from CLAUDE.md
-- Extended thinking for thorough analysis
+**Planning (Sonnet)**:
+- Extended thinking for synthesis
+- Integrated Context Analysis section in plan.md
 - Risk assessment and mitigation
 - Step-by-step implementation strategy
 
-**Input**:
-- Session CLAUDE.md (auto-loaded)
-- explore.md (referenced as needed)
-
 **Output**:
-- plan.md with detailed implementation steps
-- Updated session CLAUDE.md with plan summary
+- Session CLAUDE.md with key insights
+- plan.md with Context Analysis (integrated synthesis) + implementation strategy
+- code-search.md (detailed code analysis)
+- web-research.md (detailed web research)
 
 **Example**:
 ```bash
-/cc:plan 20251109_143045_abc123de "incremental migration approach"
+/plan "refactor authentication system" "JWT to OAuth2"
 ```
 
-#### 3. Code (`/cc:code`)
+#### 2. Code (`/code`)
 
 **Purpose**: Implementation following the established plan
 
@@ -150,7 +131,7 @@ claude code plugin install cc
 
 **Example**:
 ```bash
-/cc:commit feat "add OAuth2 authentication system"
+/commit feat "add OAuth2 authentication system"
 ```
 
 ## Subagents
@@ -364,54 +345,49 @@ See @.claude/sessions/20251109_143045_abc123de/plan.md
 ### Complete Workflow Example
 
 ```bash
-# 1. Start exploration
-/cc:explore "add rate limiting to API" "protect against abuse"
+# 1. Plan: Research + Strategy
+/plan "add rate limiting to API" "protect against abuse" "token bucket algorithm"
 
 # Output: Session 20251109_150030_abc123de_add_rate_limiting
+# - Parallel research (code + web)
+# - plan.md with integrated Context Analysis
 
-# 2. Create plan
-/cc:plan 20251109_150030_abc123de "token bucket algorithm"
+# 2. Implement
+/code 20251109_150030_abc123de "middleware implementation"
 
-# 3. Implement
-/cc:code 20251109_150030_abc123de "middleware implementation"
-
-# 4. Commit
-/cc:commit feat "add rate limiting middleware with token bucket"
+# 3. Commit
+/commit feat "add rate limiting middleware with token bucket"
 ```
 
-### Parallel Exploration in Action
+### Parallel Research in Planning
 
-The explore phase spawns 4 subagents simultaneously:
+The plan phase spawns 2 research agents simultaneously:
 
 ```
-Main Agent (Orchestrator)
-  ├─> Code Structure Explorer   ┐
-  ├─> Test Coverage Analyzer    ├─> Running in parallel
-  ├─> Dependency Analyzer       │   (isolated contexts)
-  └─> Documentation Reviewer    ┘
+Main Agent (Orchestrator - Sonnet)
+  ├─> Code Search Agent (Haiku)    ─┐
+  └─> Web Research Agent (Haiku)   ─┤ Running in parallel
+         ↓                          │ (isolated contexts)
+    [Both complete]                ─┘
          ↓
-    Synthesize findings
+    Generate plan.md with integrated synthesis
+    (Context Analysis + Implementation Strategy)
          ↓
-    Update session CLAUDE.md + explore.md
+    Update session CLAUDE.md
 ```
 
 ### Session Context Flow
 
 ```
-Explore Phase:
-  → Creates: .claude/sessions/{session}/CLAUDE.md
-  → Key findings stored (concise)
-  → Detailed results in explore.md
-
 Plan Phase:
-  → Auto-loads: session CLAUDE.md
-  → References: explore.md (if needed)
-  → Creates: plan.md
-  → Updates: session CLAUDE.md
+  → Creates: .claude/sessions/{session}/CLAUDE.md
+  → Parallel research: code-search.md + web-research.md
+  → Integrated synthesis in plan.md (Context Analysis section)
+  → Key insights stored in CLAUDE.md (concise)
 
 Code Phase:
   → Auto-loads: session CLAUDE.md
-  → References: plan.md (for details)
+  → References: plan.md (for strategy + details)
   → Implements changes
   → Creates: code.md
   → Updates: session CLAUDE.md
@@ -473,6 +449,23 @@ MIT License - see LICENSE file
 - **Research**: See RESEARCH_FINDINGS.md and CLAUDE_CODE_BEST_APPROACH.md
 
 ## Changelog
+
+### v2.1.0 (2025-11-11) - Workflow Optimization
+
+**Breaking Changes**:
+- ❌ `/explore` command removed - research now integrated into `/plan`
+- ❌ `context-synthesis-agent` removed - synthesis integrated into plan generation
+
+**Major Improvements**:
+- ✅ Streamlined workflow: 2 commands instead of 3 (33% faster)
+- ✅ Integrated synthesis: Context Analysis built into plan.md
+- ✅ Same research quality: Parallel code + web agents preserved
+- ✅ Cleaner sessions: 4 files instead of 6 per session
+- ✅ More intuitive: "plan" naturally implies research + strategy
+
+**Migration Guide**:
+- Before: `/explore` → `/plan {session_id}` → `/code {session_id}`
+- After: `/plan {query}` → `/code {session_id}`
 
 ### v2.0.0 (2025-11-09)
 
