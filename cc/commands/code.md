@@ -15,7 +15,7 @@ SESSION_ID="$1"
 SESSION_DIR=$(find .claude/sessions -name "${SESSION_ID}_*" -type d 2>/dev/null | head -1)
 
 [ -z "$SESSION_DIR" ] && echo "❌ Session not found: $SESSION_ID" && exit 1
-[ ! -f "$SESSION_DIR/plan.md" ] && echo "❌ No plan found. Run /plan first" && exit 1
+[ ! -f "$SESSION_DIR/plan.md" ] && echo "❌ No plan found. Run /explore in HYBRID mode to generate plan" && exit 1
 
 echo "✅ Loaded: $SESSION_ID"
 echo "📋 Context: CLAUDE.md (auto-loaded) | plan.md | explore.md"

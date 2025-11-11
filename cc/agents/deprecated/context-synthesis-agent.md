@@ -1,10 +1,21 @@
 ---
-description: "Synthesizes internal code and external search into actionable insights"
+description: "⚠️ DEPRECATED: Replaced by planning-agent"
 allowed-tools: Read, Write, Task
 model: sonnet
+deprecated: true
 ---
 
 # Context Synthesis Agent
+
+⚠️ **DEPRECATED**: This agent has been replaced by `planning-agent.md`.
+
+**Reason**: The workflow has been refactored from `explore → plan → code` to `explore (with integrated planning) → code`. The new `planning-agent` generates implementation plans directly instead of synthesis documents.
+
+**Migration**: Use `planning-agent.md` instead.
+
+---
+
+# Original Documentation (for reference)
 
 **Mission**: Integrate internal code search + external web search into unified, prioritized, actionable recommendations.
 
