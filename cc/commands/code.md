@@ -10,6 +10,8 @@ Implement solution for session: **$1** with focus: **$2**$3
 
 ## Session Validation
 
+<task>Validate session and load context</task>
+
 ```bash
 SESSION_ID="$1"
 SESSION_DIR=$(find .claude/sessions -name "${SESSION_ID}_*" -type d 2>/dev/null | head -1)
@@ -17,117 +19,91 @@ SESSION_DIR=$(find .claude/sessions -name "${SESSION_ID}_*" -type d 2>/dev/null 
 [ -z "$SESSION_DIR" ] && echo "❌ Session not found: $SESSION_ID" && exit 1
 [ ! -f "$SESSION_DIR/plan.md" ] && echo "❌ No plan found. Run /plan first" && exit 1
 
-echo "✅ Loaded: $SESSION_ID"
-echo "📋 Context: CLAUDE.md (auto-loaded) | plan.md | explore.md"
-
+echo "✅ Loaded: $SESSION_ID | Context: CLAUDE.md (auto) + plan.md"
 sed -i "s/Phase: planning/Phase: implementation/" "$SESSION_DIR/CLAUDE.md" 2>/dev/null || true
 ```
 
-**Context Available**:
-- Session CLAUDE.md (auto-loaded): Findings + plan summary
-- Detailed plan: @$SESSION_DIR/plan.md
-- Exploration: @$SESSION_DIR/explore.md
+**Context**: Session CLAUDE.md (auto-loaded) | Plan: @$SESSION_DIR/plan.md
 
 ## Implementation Task
 
-Execute plan following these principles:
+<task>Execute plan following quality standards</task>
 
-### Quality Standards
-- **Code style**: Match existing conventions
-- **Error handling**: Handle edge cases
-- **Testing**: Add tests per plan
-- **Documentation**: Update as needed
-- **Security**: Follow best practices
-
-### Approach
-- Make small, testable increments
-- Verify each step before proceeding
-- Follow plan step-by-step
-- Self-review for potential issues
+<requirements>
+**Quality**: Match code style | Handle errors | Add tests | Update docs | Follow security best practices
+**Approach**: Small increments | Verify each step | Follow plan order | Self-review for issues
+</requirements>
 
 ## Deliverables
 
-Save implementation summary to `$SESSION_DIR/code.md`:
+<task>Document implementation and update session</task>
 
+Save to `$SESSION_DIR/code.md`:
+
+<template>
 ```markdown
-# Implementation Summary: [Feature Name]
+# Implementation: [Feature Name]
 
-## Session Information
-- Session ID: ${SESSION_ID}
-- Date: $(date)
-- Phase: Implementation
-- Focus: $2$3
+<session_info>
+ID: ${SESSION_ID} | Date: $(date '+%Y-%m-%d %H:%M') | Phase: Implementation | Focus: $2$3
+</session_info>
 
 ## Summary
 [Brief overview of what was implemented]
 
 ## Key Changes
-1. **[File/Component]**: [What changed and why]
-2. **[File/Component]**: [What changed and why]
+1. **[file.ext:line]**: [what + why]
+2. **[file.ext:line]**: [what + why]
 
-## Tests Added/Updated
-- [Test file]: [What it tests]
-
-## Validation Results
-- ✅ [Success criterion]: Verified
+## Tests
+- [test_file.ext]: [what it tests]
+- Validation: [commands run + results]
 
 ## Status
-[Completed | Pending user approval]
+[✅ Complete | ⏸️ Pending approval]
 ```
+</template>
 
-Update `$SESSION_DIR/CLAUDE.md` with implementation summary:
+Update `$SESSION_DIR/CLAUDE.md`:
 
 ```markdown
-## Implementation Phase Complete
+## Implementation Complete
 
-### Changes Made
-- [File/Component]: [Brief description]
+**Changes**: [X] files | [components list]
+**Tests**: [X] unit + [X] integration
+**Status**: ✅ Complete - awaiting approval
 
-### Tests Added
-- [X] unit tests
-- [X] integration tests
-
-### Status
-✅ Implementation complete - awaiting user approval
-
-### References
-Implementation details: @.claude/sessions/${SESSION_ID}_*/code.md
+**Details**: @.claude/sessions/${SESSION_ID}_*/code.md
 ```
 
 ## User Approval
 
-**IMPORTANT**: Wait for user approval before finalizing.
+<critical>Wait for user approval before finalizing</critical>
 
 Present for review:
 
 ```
 ✅ Implementation complete: ${SESSION_ID}
 
-📝 Summary: [Brief description]
+📝 Summary: [brief description]
 
-🔧 Changes:
-- [X] files modified
-- [X] tests added
-- [X] components updated
+🔧 Changes: [X] files | [X] tests | [X] components
 
-✅ Validation:
-- All success criteria met
-- Tests passing
-- Integration verified
+✅ Validation: Success criteria met | Tests passing | Integration verified
 
-⏸️  Awaiting user approval
+⏸️  Awaiting approval
 
 Session: .claude/sessions/${SESSION_ID}_*/CLAUDE.md
-Summary: .claude/sessions/${SESSION_ID}_*/code.md
+Details: .claude/sessions/${SESSION_ID}_*/code.md
 ```
 
-After user approval:
+After approval:
 
 ```
-🎉 Implementation approved!
+🎉 Approved!
 
-Next steps:
-1. /commit feat "[description]" - Create conventional commit
-2. Push changes to remote
-3. Create pull request for review
+Next:
+1. /commit feat "[description]"
+2. Push to remote
+3. Create PR
 ```
