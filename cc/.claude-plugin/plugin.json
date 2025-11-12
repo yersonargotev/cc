@@ -1,7 +1,7 @@
 {
   "name": "cc",
-  "version": "2.0.0",
-  "description": "Senior engineer workflow system with multi-phase development (explore → plan → code → commit), parallel subagent exploration, CLAUDE.md hierarchical memory, and automated lifecycle hooks. 4x faster exploration, 8x better context efficiency.",
+  "version": "2.1.0",
+  "description": "Senior engineer workflow system with streamlined development (plan → code → commit), parallel research (code + web), integrated synthesis, and CLAUDE.md hierarchical memory. 33% faster workflow, same research quality.",
   "author": {
     "name": "Yerson",
     "email": "yersonargotev@gmail.com"
