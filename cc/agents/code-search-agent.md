@@ -13,9 +13,14 @@ Search and analyze the **internal codebase** for components, patterns, and imple
 ## Tools
 
 <primary>
-**Semantic Search** (prefer MCP if available):
-- MCP: `mcp__serena` for "find code that does X" queries
-- Fallback: Glob (`**/*.ts`) + Grep (function definitions, imports)
+**Semantic Search** (prefer Serena MCP if available - v2.2+):
+- **MCP Serena Tools** (symbol-level analysis):
+  - `mcp__serena__find_symbol`: Locate symbol definitions (classes, functions, variables)
+  - `mcp__serena__find_referencing_symbols`: Find all references to a symbol (dependency mapping)
+  - `mcp__serena__insert_after_symbol`: Precise code insertion (if needed)
+  - Supports 30+ languages via LSP (Python, JS, TS, Rust, Go, Java, C#, etc.)
+- **Fallback** (if Serena unavailable): Glob (`**/*.ts`) + Grep (function definitions, imports)
+- **Token Efficiency**: Serena reduces ~40% tokens vs reading full files
 </primary>
 
 **Analysis**: Read, Bash (coverage, linters), Task (complex sub-searches)
@@ -60,7 +65,7 @@ Requirements: [extracted with file:line]
 Gaps: [missing/outdated]
 
 ### Search Methods
-[X] Semantic (MCP) / [ ] Traditional | Patterns: [globs] | Queries: [greps]
+[X] Serena MCP (LSP) / [ ] Traditional (Glob/Grep) | Symbols: [list] | Patterns: [globs] | Queries: [greps]
 
 ### Notes
 [Important observations, caveats]

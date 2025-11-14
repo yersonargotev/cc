@@ -1,7 +1,7 @@
 {
   "name": "cc",
-  "version": "2.1.0",
-  "description": "Senior engineer workflow system with streamlined development (plan → code → commit), parallel research (code + web), integrated synthesis, and CLAUDE.md hierarchical memory. 33% faster workflow, same research quality.",
+  "version": "2.2.0",
+  "description": "Senior engineer workflow system with streamlined development (plan → code → commit), parallel research (code + web), Serena MCP integration for semantic code intelligence (30+ languages), and CLAUDE.md hierarchical memory. 40% token reduction with LSP-powered analysis.",
   "author": {
     "name": "Yerson",
     "email": "yersonargotev@gmail.com"

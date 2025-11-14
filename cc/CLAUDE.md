@@ -153,26 +153,37 @@ Started: YYYY-MM-DD HH:MM
 - Load git status for context
 - Display session info if active
 
-## MCP Integration (Optional)
+## MCP Integration (v2.2 - Serena Enhanced)
 
-The `/explore` command works out-of-the-box with native tools but can be enhanced with MCP servers:
+The plugin integrates MCP servers for enhanced capabilities. Native tools work out-of-the-box, but MCP servers provide superior analysis.
 
-### Recommended MCP Servers
+### Integrated MCP Servers
 
-1. **Brave Search MCP** (Enhanced web research)
+1. **Serena MCP** ⭐ (Semantic code intelligence) - **INTEGRATED v2.2+**
+   - Symbol-level code analysis and navigation
+   - Language Server Protocol (LSP) for 30+ languages
+   - IDE-like tools: find_symbol, find_referencing_symbols, insert_after_symbol
+   - ~40% token reduction vs full file reading
+   - Free & open source (MIT), sponsored by Microsoft/VS Code
+   - **Config**: `cc/.mcp.json` (auto-configured)
+   - **Status**: ✅ Active when `uv` installed
+   - **See**: `cc/MCP_INTEGRATION.md` for details
+
+### Optional MCP Servers
+
+2. **Brave Search MCP** (Enhanced web research)
    - Privacy-focused web search
    - 2,000 queries/month free
    - Config: `cc/mcp-examples/brave-search.json`
 
-2. **Claude Context MCP** (Semantic code search)
+3. **Claude Context MCP** (Alternative semantic search)
    - Hybrid search: BM25 + vector embeddings
-   - ~40% token reduction
-   - Supports: TypeScript, Python, Java, Go, Rust, etc.
+   - Similar to Serena but less comprehensive
    - Config: `cc/mcp-examples/claude-context.json`
 
-See `cc/mcp-examples/README.md` for setup instructions.
+**Recommended Stack**: Serena (code) + Brave Search (web)
 
-**Note**: MCP is optional. System gracefully degrades to native tools if MCP not configured.
+**Note**: MCP enhances but is not required. System gracefully degrades to native tools if unavailable.
 
 ## Planning Workflow (v2.1 - Optimized)
 
