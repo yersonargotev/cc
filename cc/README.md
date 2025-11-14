@@ -11,6 +11,7 @@ A Claude Code plugin implementing a comprehensive senior engineer workflow syste
 📊 **Session Management**: Persistent context across phases
 🎯 **Human-in-the-Loop**: User approval for critical operations
 ⚡ **Integrated Synthesis**: Context analysis built into planning phase
+🔍 **Serena MCP Integration** (v2.2+): Symbol-level code intelligence for 30+ languages
 
 ## Quick Start
 
@@ -422,8 +423,24 @@ Add hooks for custom automation:
 
 ### MCP Integration
 
-Reference MCP servers in `.claude-plugin/plugin.json`:
+The plugin integrates **Serena MCP** (v2.2+) for enhanced code intelligence:
 
+**Configuration**: `.mcp.json` in plugin root
+
+**Serena MCP Features**:
+- Symbol-level code analysis (find_symbol, find_referencing_symbols)
+- Language Server Protocol (LSP) support for 30+ languages
+- ~40% token reduction vs reading full files
+- Free & open source (MIT License)
+
+**Prerequisites**: Install `uv` package manager
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+**See**: `MCP_INTEGRATION.md` for complete documentation
+
+**Additional MCP Servers**: Reference in `.claude-plugin/plugin.json`:
 ```json
 {
   "mcpServers": "./.mcp.json"
@@ -449,6 +466,30 @@ MIT License - see LICENSE file
 - **Research**: See RESEARCH_FINDINGS.md and CLAUDE_CODE_BEST_APPROACH.md
 
 ## Changelog
+
+### v2.2.0 (2025-11-14) - Serena MCP Integration
+
+**New Features**:
+- ✅ Serena MCP server integration for semantic code analysis
+- ✅ Symbol-level code intelligence (find_symbol, find_referencing_symbols)
+- ✅ LSP support for 30+ programming languages
+- ✅ ~40% token reduction in code analysis operations
+- ✅ Enhanced code-search-agent with Serena capabilities
+- ✅ Comprehensive MCP_INTEGRATION.md documentation
+- ✅ Graceful fallback to native tools if Serena unavailable
+
+**Files Added**:
+- `cc/.mcp.json` - Serena MCP server configuration
+- `cc/MCP_INTEGRATION.md` - Complete integration documentation
+
+**Files Updated**:
+- `cc/CLAUDE.md` - Added Serena MCP section
+- `cc/README.md` - Added Serena features and documentation
+- `cc/agents/code-search-agent.md` - Enhanced with Serena tools
+- `cc/.claude-plugin/plugin.json` - Version bump to 2.2.0
+
+**Prerequisites**:
+- `uv` package manager required for Serena MCP
 
 ### v2.1.0 (2025-11-11) - Workflow Optimization
 
