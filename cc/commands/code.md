@@ -1,129 +1,109 @@
 ---
 allowed-tools: Read, Write, Edit, Bash, Task
-argument-hint: "<session_id> [mode: fast|strict] [focus]"
-description: Implement solution with strict scope control and token-efficient validation
+argument-hint: "<session_id> [mode: fast|strict] [scope/focus]"
+description: Token-efficient implementation with strict scope and minimal-but-real validation
 ---
 
-# Code: Implementation
+# Code: Implementation (Token-Efficient)
 
-Implement solution for session: **$1**$2
+Implement solution for session **$1** with strict scope control and adaptive validation.
 
-MODE:
+MODE (internal):
 
 - Default: `strict`
-- If `$2` starts with `fast:` → `fast` mode (lightweight validation, simpler docs)
+- If `$2` starts with `fast` → `fast` (lighter validation, same scope rules)
 
-## 1. Session Validation & Error Handling
+## 1. Session Validation & Context
 
-<task>Validate session existence and load context with comprehensive error handling</task>
+<task>Validate session and load minimal context</task>
 
 ```bash
 SESSION_ID="$1"
 
-# Error 1: Missing session ID
 if [ -z "$SESSION_ID" ]; then
   echo "❌ ERROR: Session ID required"
-  echo "Usage: /code <session_id> [focus]"
-  echo ""
+  echo "Usage: /code <session_id> [mode] [scope/focus]"
   echo "Find sessions: ls .claude/sessions/"
   exit 1
 fi
 
-# Error 2: Session not found
 SESSION_DIR=$(find .claude/sessions -name "${SESSION_ID}_*" -type d 2>/dev/null | head -1)
 if [ -z "$SESSION_DIR" ]; then
   echo "❌ ERROR: Session not found: $SESSION_ID"
-  echo ""
-  echo "Available sessions:"
-  ls .claude/sessions/ 2>/dev/null | grep -o '^[0-9_a-f]*' | head -5
   exit 1
 fi
 
-# Error 3: Missing plan
 if [ ! -f "$SESSION_DIR/plan.md" ]; then
-  echo "❌ ERROR: No implementation plan found"
-  echo "Run: /plan <query> to create a plan first"
+  echo "❌ ERROR: No implementation plan found for $SESSION_ID"
+  echo "Run: /plan <query> first to create a plan"
   exit 1
 fi
 
-# Error 4: Already implemented (warning, not error)
 if [ -f "$SESSION_DIR/code.md" ]; then
-  echo "⚠️  WARNING: Implementation already exists at:"
-  echo "   $SESSION_DIR/code.md"
-  echo ""
-  echo "Continue anyway? This will overwrite existing implementation."
-  echo "Press Ctrl+C to cancel, or continue to proceed..."
-  echo ""
+  echo "⚠️  WARNING: Existing implementation at $SESSION_DIR/code.md (will be overwritten if you continue)"
 fi
 
-echo "✅ Loaded: $SESSION_ID"
-echo "   Plan: $SESSION_DIR/plan.md"
-echo "   Context: CLAUDE.md (auto-loaded)"
-echo ""
+echo "✅ Session: $SESSION_ID"
+echo "   Plan:   $SESSION_DIR/plan.md"
 
-# Update phase in session context
 sed -i "s/Phase: planning.*/Phase: implementation/" "$SESSION_DIR/CLAUDE.md" 2>/dev/null || true
 ```
 
-**Context**: Session CLAUDE.md auto-loaded | Plan: @$SESSION_DIR/plan.md
+Use `@${SESSION_DIR}/CLAUDE.md` and `@${SESSION_DIR}/plan.md` as primary context; do not restate them fully.
 
-## 2. Scope Definition & Boundaries (CORE)
+## 2. Scope Extraction & Hard Boundaries
 
-<task>Extract implementation scope from plan and enforce hard boundaries</task>
+<task>Extract exact implementation scope from plan and enforce it</task>
 
-From `$SESSION_DIR/plan.md`, derive:
+From `@${SESSION_DIR}/plan.md` derive a concise scope:
 
-- **Target Files**: exact paths from implementation steps
-- **Target Components**: functions/classes/modules to change
-- **Out of Scope**: everything not explicitly listed above
+- Target files (exact paths)
+- Target components (functions/classes/modules)
 
 <critical>
-STRICT SCOPE (applies to ALL modes):
+STRICT SCOPE (all modes):
 - Only touch listed files/components.
 - Do not refactor neighbors "while you're there".
-- Do not add features/tests/deps unless plan or user explicitly says so.
-- If scope is ambiguous → STOP and ask user.
+- Do not add tests/dependencies/features unless plan or user explicitly says so.
+- If scope or intent is unclear → stop and ask the user.
 </critical>
 
-Output a short scope summary (1–3 lines) before coding.
+Output a 1–3 line scope summary before coding.
 
-## 3. Implementation & Validation (CORE)
+If `$3` narrows scope (e.g. specific file/component), treat it as an extra filter, never as permission to expand scope.
 
-<task>Implement plan in small steps with minimal-but-real validation</task>
+## 3. Implementation & Validation (Token-Aware)
 
-For each plan step:
+<task>Implement plan in small focused steps with minimal-but-real validation</task>
 
-1. **Change** only target files/components.
-2. **Validate**:
-   - Syntax/build check for affected language.
-   - Run only relevant tests (from plan or nearest test files).
-   - Optional lint if configured.
+For each relevant plan step:
+
+1. Change only scoped files/components.
+2. Validate with token-efficient checks:
+   - Syntax/build for affected language only.
+   - Run the most relevant tests (from plan or nearest test files), not the whole suite unless required.
+   - Optional lint if already configured and cheap.
 
 <requirements>
-- Match existing style and naming in touched files.
-- Keep changes small and focused.
-- Avoid unnecessary tool calls or re-reading large files.
-- Prefer Read/Write/Edit over Bash when possible.
-- No secrets or destructive operations.
+- Match existing style and patterns in touched files.
+- Keep edits minimal; avoid large refactors.
+- Prefer `Read/Write/Edit` over shell when possible.
+- Avoid re-reading large files repeatedly.
+- No destructive operations or secret handling.
 </requirements>
 
-If validation fails: fix, re-run, then continue.
+Mode specifics:
 
-In `fast` mode:
+- `fast`: syntax + 1–2 key tests; no extended explanations.
+- `strict`: syntax + relevant tests (+ lint if available); be conservative with errors.
 
-- Keep validation minimal (syntax + most relevant tests).
-- Skip incremental checkpoints and extended reporting.
+If any check fails, fix and re-run before continuing.
 
-In `strict` mode:
+## 4. Implementation Report (Compact)
 
-- Apply full validation (tests, lint, any project checks from CLAUDE.md/plan.md).
-- Be conservative with scope and error handling.
+<task>Write a compact implementation report to `$SESSION_DIR/code.md`</task>
 
-## 4. Implementation Report (LITE)
-
-<task>Write a concise implementation report to `$SESSION_DIR/code.md`</task>
-
-Use this **lite** template (see `@docs/code-command-implementation-template.md` for full version):
+Use this **compact** template (full version in `@docs/code-command-implementation-template.md`):
 
 ```markdown
 # Implementation: [Name from plan]
@@ -132,36 +112,36 @@ ID: ${SESSION_ID} | Date: $(date '+%Y-%m-%d %H:%M') | Mode: [fast|strict]
 
 ## Summary
 
-- [2–3 short bullets: what & why]
+- [2–3 short bullets: what was changed and why]
 
 ## Changes
 
-- file:lines - WHAT | WHY | TESTS
-- file:lines - ...
+- path/file.ext:line-range – WHAT | WHY | TESTS
+- ...
 
 ## Validation
 
 - Tests: [command(s)] → [X passed, Y failed (0 if none)]
-- Other checks (lint/build): [commands + short result]
+- Other checks (lint/build): [commands + short result or N/A]
 
 ## Status
 
 - [✅ Complete | ⏸️ Needs review]
 ```
 
-Keep report short and specific; link to extra details only if needed.
+Keep this file short and factual; link to extra details (issues/PRs/docs) only when essential.
 
-Update `$SESSION_DIR/CLAUDE.md` with a one-line implementation status referencing `code.md`.
+Append to `@${SESSION_DIR}/CLAUDE.md` a one-line implementation status referencing `code.md`.
 
-## 5. User Review
+## 5. User-Facing Summary
 
-Present a brief summary for the user:
+Present a brief summary to the user:
 
 ```
 ✅ Implementation: ${SESSION_ID} | Mode: [fast|strict]
-Files: [count] | Tests: [summary]
+Files touched: [count] | Tests: [short result]
 Details: ${SESSION_DIR}/code.md
-⏸️ Awaiting review/approval
+⏸️ Review changes, then proceed with /commit if satisfied
 ```
 
-Wait for explicit approval before considering the task done or moving to `/commit`.
+Do not repeat the full report in the chat; rely on `code.md` for details.
