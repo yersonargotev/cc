@@ -14,8 +14,9 @@ Search and retrieve external information related to the user's query or topic. F
 
 <primary>
 **Search** (prefer MCP if available):
-- MCP: `mcp__tavily`, `mcp__exa`, `mcp__context7`
-- Native: `WebSearch` (fallback, always available)
+- Use Tavily MCP for web search
+- Use Context7 MCP for official documentation
+- Use WebSearch as fallback
 </primary>
 
 **Fetch**: `WebFetch` for specific URLs | **Delegate**: `Task` for complex multi-topic research
@@ -39,25 +40,33 @@ Search and retrieve external information related to the user's query or topic. F
 ## External Search: [Topic]
 
 ### Overview
+
 [Brief summary of what was found]
 
 ### Key Concepts
+
 - [Main concepts, definitions, how it works]
 
 ### Documentation Found
+
 - [Official docs, API references, specs with URLs]
 
 ### Examples & Implementations
+
 - [Code samples, tutorials, demos with URLs]
 
 ### Related Information
+
 - [Connected topics, technologies, ecosystem context]
 
 ### Recent Updates (2024-2025)
+
 - [New features, changes, announcements if relevant]
 
 ### Sources
+
 - [List of URLs searched]
+
 ```
 </template>
 
