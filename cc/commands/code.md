@@ -1,109 +1,147 @@
 ---
 allowed-tools: Read, Write, Edit, Bash, Task
-argument-hint: "[session_id] [implementation focus] [target files/components]"
-description: Implement solution with auto-loaded session context and plan
+argument-hint: "<session_id> [mode: fast|strict] [scope/focus]"
+description: Token-efficient implementation with strict scope and minimal-but-real validation
 ---
 
-# Code: Implementation
+# Code: Implementation (Token-Efficient)
 
-Implement solution for session: **$1** with focus: **$2**$3
+Implement solution for session **$1** with strict scope control and adaptive validation.
 
-## Session Validation
+MODE (internal):
 
-<task>Validate session and load context</task>
+- Default: `strict`
+- If `$2` starts with `fast` → `fast` (lighter validation, same scope rules)
+
+## 1. Session Validation & Context
+
+<task>Validate session and load minimal context</task>
 
 ```bash
 SESSION_ID="$1"
+
+if [ -z "$SESSION_ID" ]; then
+  echo "❌ ERROR: Session ID required"
+  echo "Usage: /code <session_id> [mode] [scope/focus]"
+  echo "Find sessions: ls .claude/sessions/"
+  exit 1
+fi
+
 SESSION_DIR=$(find .claude/sessions -name "${SESSION_ID}_*" -type d 2>/dev/null | head -1)
+if [ -z "$SESSION_DIR" ]; then
+  echo "❌ ERROR: Session not found: $SESSION_ID"
+  exit 1
+fi
 
-[ -z "$SESSION_DIR" ] && echo "❌ Session not found: $SESSION_ID" && exit 1
-[ ! -f "$SESSION_DIR/plan.md" ] && echo "❌ No plan found. Run /plan first" && exit 1
+if [ ! -f "$SESSION_DIR/plan.md" ]; then
+  echo "❌ ERROR: No implementation plan found for $SESSION_ID"
+  echo "Run: /plan <query> first to create a plan"
+  exit 1
+fi
 
-echo "✅ Loaded: $SESSION_ID | Context: CLAUDE.md (auto) + plan.md"
-sed -i "s/Phase: planning/Phase: implementation/" "$SESSION_DIR/CLAUDE.md" 2>/dev/null || true
+if [ -f "$SESSION_DIR/code.md" ]; then
+  echo "⚠️  WARNING: Existing implementation at $SESSION_DIR/code.md (will be overwritten if you continue)"
+fi
+
+echo "✅ Session: $SESSION_ID"
+echo "   Plan:   $SESSION_DIR/plan.md"
+
+sed -i "s/Phase: planning.*/Phase: implementation/" "$SESSION_DIR/CLAUDE.md" 2>/dev/null || true
 ```
 
-**Context**: Session CLAUDE.md (auto-loaded) | Plan: @$SESSION_DIR/plan.md
+Use `@${SESSION_DIR}/CLAUDE.md` and `@${SESSION_DIR}/plan.md` as primary context; do not restate them fully.
 
-## Implementation Task
+## 2. Scope Extraction & Hard Boundaries
 
-<task>Execute plan following quality standards</task>
+<task>Extract exact implementation scope from plan and enforce it</task>
+
+From `@${SESSION_DIR}/plan.md` derive a concise scope:
+
+- Target files (exact paths)
+- Target components (functions/classes/modules)
+
+<critical>
+STRICT SCOPE (all modes):
+- Only touch listed files/components.
+- Do not refactor neighbors "while you're there".
+- Do not add tests/dependencies/features unless plan or user explicitly says so.
+- If scope or intent is unclear → stop and ask the user.
+</critical>
+
+Output a 1–3 line scope summary before coding.
+
+If `$3` narrows scope (e.g. specific file/component), treat it as an extra filter, never as permission to expand scope.
+
+## 3. Implementation & Validation (Token-Aware)
+
+<task>Implement plan in small focused steps with minimal-but-real validation</task>
+
+For each relevant plan step:
+
+1. Change only scoped files/components.
+2. Validate with token-efficient checks:
+   - Syntax/build for affected language only.
+   - Run the most relevant tests (from plan or nearest test files), not the whole suite unless required.
+   - Optional lint if already configured and cheap.
 
 <requirements>
-**Quality**: Match code style | Handle errors | Add tests | Update docs | Follow security best practices
-**Approach**: Small increments | Verify each step | Follow plan order | Self-review for issues
+- Match existing style and patterns in touched files.
+- Keep edits minimal; avoid large refactors.
+- Prefer `Read/Write/Edit` over shell when possible.
+- Avoid re-reading large files repeatedly.
+- No destructive operations or secret handling.
 </requirements>
 
-## Deliverables
+Mode specifics:
 
-<task>Document implementation and update session</task>
+- `fast`: syntax + 1–2 key tests; no extended explanations.
+- `strict`: syntax + relevant tests (+ lint if available); be conservative with errors.
 
-Save to `$SESSION_DIR/code.md`:
+If any check fails, fix and re-run before continuing.
 
-<template>
+## 4. Implementation Report (Compact)
+
+<task>Write a compact implementation report to `$SESSION_DIR/code.md`</task>
+
+Use this **compact** template (full version in `@docs/code-command-implementation-template.md`):
+
 ```markdown
-# Implementation: [Feature Name]
+# Implementation: [Name from plan]
 
-<session_info>
-ID: ${SESSION_ID} | Date: $(date '+%Y-%m-%d %H:%M') | Phase: Implementation | Focus: $2$3
-</session_info>
+ID: ${SESSION_ID} | Date: $(date '+%Y-%m-%d %H:%M') | Mode: [fast|strict]
 
 ## Summary
-[Brief overview of what was implemented]
 
-## Key Changes
-1. **[file.ext:line]**: [what + why]
-2. **[file.ext:line]**: [what + why]
+- [2–3 short bullets: what was changed and why]
 
-## Tests
-- [test_file.ext]: [what it tests]
-- Validation: [commands run + results]
+## Changes
+
+- path/file.ext:line-range – WHAT | WHY | TESTS
+- ...
+
+## Validation
+
+- Tests: [command(s)] → [X passed, Y failed (0 if none)]
+- Other checks (lint/build): [commands + short result or N/A]
 
 ## Status
-[✅ Complete | ⏸️ Pending approval]
-```
-</template>
 
-Update `$SESSION_DIR/CLAUDE.md`:
-
-```markdown
-## Implementation Complete
-
-**Changes**: [X] files | [components list]
-**Tests**: [X] unit + [X] integration
-**Status**: ✅ Complete - awaiting approval
-
-**Details**: @.claude/sessions/${SESSION_ID}_*/code.md
+- [✅ Complete | ⏸️ Needs review]
 ```
 
-## User Approval
+Keep this file short and factual; link to extra details (issues/PRs/docs) only when essential.
 
-<critical>Wait for user approval before finalizing</critical>
+Append to `@${SESSION_DIR}/CLAUDE.md` a one-line implementation status referencing `code.md`.
 
-Present for review:
+## 5. User-Facing Summary
 
-```
-✅ Implementation complete: ${SESSION_ID}
-
-📝 Summary: [brief description]
-
-🔧 Changes: [X] files | [X] tests | [X] components
-
-✅ Validation: Success criteria met | Tests passing | Integration verified
-
-⏸️  Awaiting approval
-
-Session: .claude/sessions/${SESSION_ID}_*/CLAUDE.md
-Details: .claude/sessions/${SESSION_ID}_*/code.md
-```
-
-After approval:
+Present a brief summary to the user:
 
 ```
-🎉 Approved!
-
-Next:
-1. /commit feat "[description]"
-2. Push to remote
-3. Create PR
+✅ Implementation: ${SESSION_ID} | Mode: [fast|strict]
+Files touched: [count] | Tests: [short result]
+Details: ${SESSION_DIR}/code.md
+⏸️ Review changes, then proceed with /commit if satisfied
 ```
+
+Do not repeat the full report in the chat; rely on `code.md` for details.
