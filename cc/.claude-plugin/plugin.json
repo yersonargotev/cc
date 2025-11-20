@@ -1,7 +1,7 @@
 {
   "name": "cc",
-  "version": "2.2.0",
-  "description": "Senior engineer workflow system with streamlined development (plan → code → commit), parallel research (code + web), Serena MCP integration for semantic code intelligence (30+ languages), and CLAUDE.md hierarchical memory. 40% token reduction with LSP-powered analysis.",
+  "version": "3.0.0",
+  "description": "Senior engineer workflow system with dual-layer semantic search: Serena MCP (LSP symbols) + Code Context MCP (embeddings). Features: natural language code queries, plan → code → commit workflow, parallel research, automated setup via SessionStart hooks, CLAUDE.md hierarchical memory. 60-80% improved search relevance, 40% token reduction, 30+ languages. One-command installation: /setup-semantic-search",
   "author": {
     "name": "Yerson",
     "email": "yersonargotev@gmail.com"
@@ -9,5 +9,6 @@
   "homepage": "https://github.com/yersonargotev/cc-mkp",
   "repository": "https://github.com/yersonargotev/cc-mkp",
   "license": "MIT",
-  "mcpServers": "./.mcp.json"
+  "mcpServers": "./.mcp.json",
+  "hooks": "./hooks/SessionStart.json"
 }
